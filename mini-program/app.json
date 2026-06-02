@@ -1,0 +1,19 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/game/index",
+    "pages/review/index",
+    "pages/about/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "消消学英语",
+    "navigationBarBackgroundColor": "#ffd9e8",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#ffd9e8",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": false
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

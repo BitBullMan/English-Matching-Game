@@ -1,0 +1,45 @@
+/* 全局样式 */
+page {
+  background: #ffd9e8;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #1f1f1f;
+}
+
+/* 圆润卡通标题（小程序不支持自定义 Web Font，用系统圆体 fallback） */
+.title-en {
+  font-weight: 700;
+  font-size: 60rpx;
+  background: linear-gradient(90deg, #ff5e9b 0%, #ff9a3a 30%, #ffd24a 50%, #6fc6ff 75%, #b076ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 2rpx;
+}
+
+.title-zh {
+  font-size: 32rpx;
+  color: #d8395d;
+  letter-spacing: 8rpx;
+}
+
+/* 通用按钮 */
+.btn-blue {
+  background: linear-gradient(180deg, #6fc6ff, #2b88d6);
+  color: #fff;
+  border-radius: 36rpx;
+  box-shadow: 0 8rpx 0 #1a5e9c;
+}
+
+.btn-yellow {
+  background: #ffd24a;
+  color: #5c3700;
+  border-radius: 28rpx;
+  box-shadow: 0 6rpx 0 #cb8e0e;
+}
+
+.btn-pink {
+  background: linear-gradient(180deg, #ffb6d0, #ff7aa8);
+  color: #fff;
+  border-radius: 28rpx;
+  box-shadow: 0 6rpx 0 #c54a78;
+}

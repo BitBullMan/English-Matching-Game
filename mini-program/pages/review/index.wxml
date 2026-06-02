@@ -1,0 +1,18 @@
+<view class="review">
+  <view class="list">
+    <view
+      wx:for="{{list}}" wx:key="id"
+      class="row {{item.learned ? '' : 'locked'}}"
+      data-id="{{item.id}}"
+      bindtap="tapWord">
+      <text class="emoji">{{item.learned ? item.emoji : '❓'}}</text>
+      <view class="text">
+        <view class="en">{{item.learned ? item.en : '???'}}</view>
+        <view class="zh">{{item.learned ? item.zh : '消除 3 个解锁'}}</view>
+      </view>
+      <view wx:if="{{item.learned}}" class="stars">
+        <text wx:for="{{[1,2,3]}}" wx:key="*this" wx:for-item="i">{{i <= item.count ? '⭐' : ''}}</text>
+      </view>
+    </view>
+  </view>
+</view>

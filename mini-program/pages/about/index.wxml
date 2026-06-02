@@ -1,0 +1,19 @@
+<view class="about">
+  <view class="hero">
+    <view class="mascot">🐼</view>
+    <view class="title">消消学英语</view>
+    <view class="sub">三消的玩法，单词卡的快感</view>
+  </view>
+  <view class="block">
+    <view class="bt">🎮 怎么玩</view>
+    <view class="bb">凑齐 3 张相同就消除，弹出英文/中文/英美音标/发音。卡满 7 格则失败。</view>
+  </view>
+  <view class="block">
+    <view class="bt">🔊 发音</view>
+    <view class="bb">需要把预生成的 OpenAI TTS mp3 上传到小程序静态资源 /audio/ 目录。</view>
+  </view>
+  <view class="block">
+    <view class="bt">🚀 后续</view>
+    <view class="bb">完善每日签到 / 排行榜 / 设置页 / 多人对战。</view>
+  </view>
+</view>

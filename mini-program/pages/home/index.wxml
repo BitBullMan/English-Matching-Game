@@ -1,0 +1,40 @@
+<view class="home">
+  <view class="top">
+    <view class="coin-pill">
+      <view class="coin-emoji">💰</view>
+      <text>{{coins}}</text>
+    </view>
+    <view class="streak-pill">🔥 连续 0 天</view>
+  </view>
+
+  <view class="stage">
+    <view class="title-en">English Match</view>
+    <view class="title-zh">消消学英语</view>
+    <view class="mascot">🐼</view>
+    <view class="speech-bubble">🎋 一起学新词吧！</view>
+  </view>
+
+  <view class="bottom">
+    <view class="stat-strip">
+      <view class="stat">
+        <view class="stat-n">{{learnedCount}}</view>
+        <view class="stat-l">已学</view>
+      </view>
+      <view class="stat">
+        <view class="stat-n">{{totalCount}}</view>
+        <view class="stat-l">词库</view>
+      </view>
+      <view class="stat">
+        <view class="stat-n">{{pct}}%</view>
+        <view class="stat-l">完成</view>
+      </view>
+    </view>
+
+    <button class="play-btn" bindtap="goGame">▶  开始游戏</button>
+
+    <view class="grid">
+      <button class="grid-btn" bindtap="goReview">📚 复习</button>
+      <button class="grid-btn" bindtap="goAbout">ℹ️ 关于</button>
+    </view>
+  </view>
+</view>

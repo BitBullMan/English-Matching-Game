@@ -1,0 +1,101 @@
+<view class="game">
+  <view class="top">
+    <view class="back" bindtap="goHome">‹</view>
+    <view class="coin-pill">
+      <view class="coin-emoji">💰</view>
+      <text>{{coins}}</text>
+    </view>
+    <view class="spacer" />
+    <view class="back blue" bindtap="restart">⟳</view>
+  </view>
+
+  <view wx:if="{{combo >= 2}}" class="combo-side">连击<text class="x">×</text><text class="n">{{combo}}</text></view>
+
+  <view class="board">
+    <view class="board-inner" style="width: 560rpx; height: 600rpx;">
+      <view
+        wx:for="{{tiles}}" wx:key="id"
+        class="tile {{coveredMap[item.id] ? 'covered' : 'active'}}"
+        style="left: {{item.x}}rpx; top: {{item.y}}rpx; width: {{TILE}}rpx; height: {{TILE}}rpx; transform: rotate({{item.rot}}deg); z-index: {{10 + item.layer}};"
+        data-id="{{item.id}}"
+        bindtap="tapTile">
+        <text class="tile-emoji">{{item.emoji}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tray-wrap">
+    <view class="tray">
+      <block wx:for="{{[0,1,2,3,4,5,6]}}" wx:key="*this">
+        <view class="slot {{tray[item] ? '' : 'empty'}}">
+          <text wx:if="{{tray[item]}}">{{tray[item].wordId}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="tools">
+    <button class="tb tp" bindtap="toolRemove" disabled="{{tray.length === 0 || tools.remove <= 0}}">
+      <text class="m">🐼</text>
+      <text class="lb">移出</text>
+      <view class="bdg">{{tools.remove}}</view>
+    </button>
+    <button class="tb tbl" bindtap="toolUndo" disabled="{{history.length === 0 || tools.undo <= 0}}">
+      <text class="m">🐼</text>
+      <text class="lb">撤回</text>
+      <view class="bdg">{{tools.undo}}</view>
+    </button>
+    <button class="tb tpu" bindtap="toolShuffle" disabled="{{tools.shuffle <= 0}}">
+      <text class="m">🐼</text>
+      <text class="lb">洗牌</text>
+      <view class="bdg">{{tools.shuffle}}</view>
+    </button>
+  </view>
+
+  <view wx:if="{{pop}}" class="combo-pop">{{pop}}<text class="plus">+30 💰</text></view>
+
+  <!-- 单词卡 -->
+  <view wx:if="{{card}}" class="overlay" bindtap="closeCard">
+    <view class="card" catchtap="">
+      <view class="c-head">
+        <view class="c-emoji">{{card.emoji}}</view>
+        <view class="c-en">{{card.en}}</view>
+        <view class="c-zh">{{card.zh}}</view>
+      </view>
+      <view class="c-body">
+        <view class="ipa-row">
+          <view class="flag fuk">UK</view>
+          <text class="ipa-text">{{card.uk}}</text>
+          <view class="speakb" bindtap="speakUK">🔊</view>
+        </view>
+        <view class="ipa-row">
+          <view class="flag fus">US</view>
+          <text class="ipa-text">{{card.us}}</text>
+          <view class="speakb" bindtap="speakUS">🔊</view>
+        </view>
+        <view class="expand-panel">
+          <view class="bi">
+            <view class="bi-title">💬 例句</view>
+            <view class="bi-en">{{card.ex_en}}</view>
+            <view class="bi-zh">{{card.ex_zh}}</view>
+          </view>
+          <view class="bi">
+            <view class="bi-title">💡 记住它</view>
+            <view class="bi-en">{{card.memo_en}}</view>
+            <view class="bi-zh">{{card.memo_zh}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="c-close" bindtap="closeCard">继续 Continue</view>
+    </view>
+  </view>
+
+  <!-- 通关/失败 -->
+  <view wx:if="{{endTitle}}" class="overlay">
+    <view class="modal">
+      <view class="m-title">{{endTitle}}</view>
+      <view class="m-text">{{endText}}</view>
+      <view class="m-btn" bindtap="restart">再来一关</view>
+    </view>
+  </view>
+</view>

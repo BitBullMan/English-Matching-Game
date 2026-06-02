@@ -1,0 +1,15 @@
+.review { background: linear-gradient(180deg, #fff7e0 0%, #fff 100%); min-height: 100vh; padding: 24rpx; }
+.list { display: flex; flex-direction: column; gap: 16rpx; }
+.row {
+  display: flex; align-items: center; gap: 24rpx;
+  padding: 20rpx 24rpx;
+  background: #fff;
+  border: 4rpx solid #ffe082;
+  border-radius: 24rpx;
+}
+.row.locked { opacity: 0.55; background: #f5f5f5; border-color: #ddd; }
+.emoji { font-size: 56rpx; }
+.text { flex: 1; }
+.en { font-size: 30rpx; font-weight: 800; color: #2b2b2b; }
+.zh { font-size: 24rpx; color: #666; margin-top: 4rpx; }
+.stars { font-size: 26rpx; color: #ff9a3a; }

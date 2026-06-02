@@ -1,0 +1,33 @@
+{
+  "name": "english-match-game",
+  "private": true,
+  "version": "0.5.0",
+  "type": "module",
+  "description": "羊了个羊式英语学习游戏 — 三消触发单词卡（中英 + 英美音标 + 发音）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "cap:init": "cap init '消消学英语' com.englishmatch.app --web-dir=dist",
+    "cap:add:ios": "npm run build && cap add ios",
+    "cap:add:android": "npm run build && cap add android",
+    "cap:sync": "npm run build && cap sync",
+    "ios": "npm run cap:sync && cap open ios",
+    "android": "npm run cap:sync && cap open android"
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/core": "^8.3.4",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/cli": "^8.3.4",
+    "@capacitor/ios": "^8.3.4",
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0"
+  }
+}
