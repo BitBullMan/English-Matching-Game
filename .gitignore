@@ -33,5 +33,5 @@ yarn-error.log*
 # ios/
 # android/
 
-# 预生成 mp3（太大不传 Git，让 Vercel build 时另外处理或走 CDN）
-public/audio
+# 预生成 mp3 — 商业化部署需要随代码一起 commit，让 CDN 自动分发
+# public/audio  ← 注释掉，让 audio 文件进 git
