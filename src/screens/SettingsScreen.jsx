@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { store } from '../utils/store.js'
-import { ttsInfo } from '../utils/speech.js'
+import { ttsInfo, speak } from '../utils/speech.js'
 import { TRACK_LIST, startMusic, stopMusic } from '../utils/music.js'
 
 export default function SettingsScreen({ onBack, onSettingsChange }) {
@@ -63,6 +63,16 @@ export default function SettingsScreen({ onBack, onSettingsChange }) {
           options={[{ v: 'uk', l: '英音 🇬🇧' }, { v: 'us', l: '美音 🇺🇸' }]}
           onChange={v => update({ defaultAccent: v })}
         />
+
+        {/* 试听 — 让用户立刻听到当前 voice */}
+        <div className="set-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
+          <span style={{ fontSize: 12, color: '#888', fontWeight: 700 }}>🎧 试听语音</span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="seg-btn" style={{ flex: 1 }} onClick={() => speak('Hello, I am your English teacher.', 'uk')}>🇬🇧 英音</button>
+            <button className="seg-btn" style={{ flex: 1 }} onClick={() => speak('Hello, I am your English teacher.', 'us')}>🇺🇸 美音</button>
+            <button className="seg-btn" style={{ flex: 1 }} onClick={() => speak('你好，我是你的中文老师', 'zh')}>🇨🇳 中文</button>
+          </div>
+        </div>
         <Choice
           label="🎯 每日目标"
           value={String(s.dailyGoal)}

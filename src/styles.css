@@ -586,6 +586,25 @@ body { background: var(--bg-mid); }
   font-weight: 800;
 }
 
+/* 例句/记忆点/贴士 标题 + 小型 🔊 */
+.bi-title-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.bi-speak {
+  background: #57b6ff;
+  color: #fff;
+  border: 2px solid #fff;
+  width: 28px; height: 28px;
+  border-radius: 9px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #2b88d6;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.bi-speak:active { transform: translateY(1px); box-shadow: 0 1px 0 #2b88d6; }
+
 .ipa-text {
   font-family: "Lucida Sans Unicode", "Segoe UI", sans-serif;
   font-style: italic;
