@@ -86,23 +86,39 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
   })
 }
 
-// 清晰响亮的偏好女声名单（macOS/iOS/Chrome/Windows 覆盖）
+// 偏好女声 — 严格优先本地 voice（localService=true），避免依赖 Google 网络 voice
+// macOS Chrome 上 Google 系列 voice 是网络 voice，网速不稳就降级回 Daniel 男声
+//
+// UK 真正高质量本地女声极少：macOS 默认只有 Martha；Kate/Serena 要手动下载。
+// 美音的 Samantha 是 macOS 默认且本地，音质优秀且听感清晰 — 强烈推荐做 UK 学习模式 fallback
 const PREFERRED_FEMALE_UK = [
-  'Kate', 'Serena', 'Hazel', 'Stephanie', 'Fiona',
-  'Google UK English Female',
-  'Microsoft Hazel', 'Microsoft Susan', 'Microsoft Libby',
-  'Sonia', 'Mia', 'Abbi'
+  // macOS Premium/Enhanced (用户需下载，但如有则最佳)
+  'Kate', 'Serena', 'Stephanie', 'Fiona', 'Susan',
+  // macOS Eloquence (普通本地 voice)
+  'Martha', 'Shelley',
+  // Windows
+  'Hazel', 'Microsoft Hazel', 'Microsoft Susan', 'Microsoft Libby', 'Sonia', 'Mia', 'Abbi'
+  // 注意：故意不放 'Google UK English Female'，它是网络 voice 不稳定
 ]
 const PREFERRED_FEMALE_US = [
-  'Samantha', 'Allison', 'Ava', 'Susan', 'Karen', 'Victoria', 'Nicky',
-  'Google US English Female',
+  // macOS 默认 — Samantha 是 macOS 最稳的女声 ★
+  'Samantha', 'Allison', 'Ava', 'Susan', 'Victoria', 'Nicky', 'Kathy',
+  // Windows Neural
   'Microsoft Aria', 'Microsoft Jenny', 'Microsoft Ana',
   'Nancy', 'Jane', 'Sara'
 ]
 const PREFERRED_ZH = [
-  'Tingting', 'Sinji', 'Meijia', 'Lisheng',
-  'Google 普通话（中国大陆）', 'Microsoft Xiaoxiao', 'Microsoft Yunxi'
+  // macOS 本地中文女声
+  'Tingting', 'Sinji', 'Meijia', 'Li-Mu',
+  // Windows
+  'Microsoft Xiaoxiao', 'Microsoft Yunxi',
+  // Google 网络 voice 兜底
+  'Google 普通话（中国大陆）'
 ]
+
+// 学英音模式下，如果系统没有 UK 本地女声，fallback 用 US 高质量女声（Samantha 等）
+// 比用低质量 Google UK 网络 voice 听感好得多
+const FALLBACK_US_FOR_UK = ['Samantha', 'Allison', 'Ava', 'Victoria', 'Susan']
 
 // 已知男声名 — 用于明确排除（按优先级 fallback 时不选这些）
 const KNOWN_MALE_NAMES = /\b(daniel|mike|mark|david|alex|tom|james|guy|jakob|fred|jorge|ryan|brian|oliver|arthur|aaron|albert|bruce|harry|paul|jack|john)\b/i
@@ -130,29 +146,50 @@ function pickBrowserVoice(lang, accent) {
     const u = _voices.find(v => v.voiceURI === userURI)
     if (u) return u
   }
-  // 2. 按偏好女声名单精确匹配
+
+  // 2. 偏好女声名单（限本地 voice — 避免不稳定的 Google 网络 voice）
   const namelist =
     accent === 'uk' ? PREFERRED_FEMALE_UK :
     accent === 'us' ? PREFERRED_FEMALE_US :
     accent === 'zh' ? PREFERRED_ZH : []
-  const named = matchByName(inLang, namelist)
+  const localOnly = inLang.filter(v => v.localService)
+  let named = matchByName(localOnly, namelist)
   if (named) return named
-  // 3. 含 'female' / 'woman' 字样
+
+  // 3. 学英音模式特殊处理：本地没 UK 女声 → 用本地 US 高质量女声（Samantha 等）
+  //    比用 Google 网络 UK 女声听感稳定得多
+  if (accent === 'uk') {
+    const usLocalFemale = _voices.filter(v =>
+      v.localService && v.lang && v.lang.toLowerCase().startsWith('en-us')
+    )
+    const usNamed = matchByName(usLocalFemale, FALLBACK_US_FOR_UK)
+    if (usNamed) return usNamed
+  }
+
+  // 4. 本地 voice 中含 female/woman 字样
+  const localFemale = localOnly.find(v => /female|woman/i.test(v.name))
+  if (localFemale) return localFemale
+
+  // 5. 本地任何非男声
+  const localNotMale = localOnly.find(v => !isMaleVoice(v))
+  if (localNotMale) return localNotMale
+
+  // 6. 实在没有本地，才用网络 voice（按 namelist 再试一遍非本地）
+  named = matchByName(inLang, namelist)
+  if (named) return named
+
+  // 7. 含 female/woman
   const female = inLang.find(v => /female|woman/i.test(v.name))
   if (female) return female
-  // 4. Premium / Enhanced / Neural — 但排除明显男声
-  const premiumNotMale = inLang.find(v =>
-    /premium|enhanced|neural|natural|siri|wavenet/i.test(v.name) && !isMaleVoice(v)
-  )
-  if (premiumNotMale) return premiumNotMale
-  // 5. 任何 lang 匹配且非已知男声
+
+  // 8. 任何非男声
   const notMale = inLang.find(v => !isMaleVoice(v))
   if (notMale) return notMale
-  // 6. 实在没有非男声的，至少匹配 lang
+
+  // 9. 兜底
   if (inLang.length) return inLang[0]
-  // 7. 任何同前缀的（en / zh）
   const generic = _voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0, 2)) && !isMaleVoice(v))
-  return generic || _voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0, 2))) || null
+  return generic || null
 }
 
 // 暴露给设置页：列出某 accent 可用的 voice
