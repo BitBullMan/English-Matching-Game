@@ -203,14 +203,36 @@ async function playOpenAI(text, accent) {
   return false
 }
 
-// —— 浏览器原生 fallback ——
-async function playBrowser(text, accent) {
+// —— iOS 解锁 ——
+// iOS Safari 要求第一次 speak 必须在用户手势内同步调用，否则永远静默。
+// 也对 WeChat / In-App-Browser 有效。这里在第一次 unlock() 调用时
+// 发一个静音 utterance 来激活 SpeechSynthesis 引擎。
+let _unlocked = false
+export function unlockSpeech() {
+  if (_unlocked) return
+  if (typeof window === 'undefined' || !window.speechSynthesis) return
+  try {
+    // 静音 utter — 不发声但能"激活"引擎
+    const silent = new SpeechSynthesisUtterance(' ')
+    silent.volume = 0
+    silent.rate = 1
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(silent)
+    _unlocked = true
+    console.log('[speech] unlocked')
+  } catch (e) {
+    console.warn('[speech] unlock failed:', e)
+  }
+}
+
+// —— 浏览器原生（同步版本，保持手势上下文）——
+function playBrowser(text, accent) {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     console.warn('[speech] speechSynthesis not available')
     return false
   }
-  // 等 voices 加载完成（修复"没声音"的核心）
-  await ensureVoicesReady()
+  // 同步加载 voices（即使首次返回空也继续，让浏览器用默认 voice）
+  if (!_voices.length) loadVoices()
 
   const lang =
     accent === 'uk' ? 'en-GB' :
@@ -220,22 +242,41 @@ async function playBrowser(text, accent) {
   utter.lang = lang
   utter.volume = 1.0
   utter.pitch  = accent === 'uk' ? 1.05 : 1.0
-  utter.rate   = accent === 'zh' ? 0.85
-              : accent === 'uk' ? 0.95
-              : 0.95
+  utter.rate   = accent === 'zh' ? 0.85 : 0.95
+
   const v = pickBrowserVoice(lang, accent)
   if (v) {
     utter.voice = v
     console.log(`[speech] ${accent}: "${text}" → ${v.name} (${v.lang})`)
   } else {
-    console.warn(`[speech] no voice matched for ${lang}, using browser default`)
+    console.warn(`[speech] no voice for ${lang}, using browser default`)
   }
+
   window.speechSynthesis.cancel()
-  // Chrome bug workaround：偶尔 speak 后 utterance 不发声，要等一会再 speak
-  setTimeout(() => {
-    try { window.speechSynthesis.speak(utter) }
-    catch (e) { console.error('[speech] speak failed:', e) }
-  }, 50)
+  try {
+    window.speechSynthesis.speak(utter)
+  } catch (e) {
+    console.error('[speech] speak failed:', e)
+    return false
+  }
+
+  // 如果 voices 还没加载，加载完后重播一次（仅在第一次 voices 异步加载后用）
+  if (!v && !_voices.length) {
+    ensureVoicesReady().then(() => {
+      const v2 = pickBrowserVoice(lang, accent)
+      if (v2) {
+        const u2 = new SpeechSynthesisUtterance(text)
+        u2.lang = lang
+        u2.volume = 1.0
+        u2.pitch = utter.pitch
+        u2.rate = utter.rate
+        u2.voice = v2
+        window.speechSynthesis.cancel()
+        window.speechSynthesis.speak(u2)
+        console.log(`[speech] re-played ${accent}: "${text}" with ${v2.name}`)
+      }
+    })
+  }
   return true
 }
 
@@ -245,21 +286,36 @@ async function playBrowser(text, accent) {
  * @param {'uk'|'us'|'zh'} accent
  * @param {string} [wordId]
  */
-export async function speak(text, accent = 'uk', wordId) {
-  duckMusic(1.5)
-  if (wordId) {
-    const ok = await tryPlayCached(wordId, accent)
-    if (ok) return
-  }
-  if (PROVIDER === 'openai') {
-    try {
-      const ok = await playOpenAI(text, accent)
-      if (ok) return
-    } catch (e) {
-      console.warn('OpenAI TTS failed, falling back to browser:', e)
+export function speak(text, accent = 'uk', wordId) {
+  // 关键：同步路径优先 — iOS Safari/WeChat 必须在用户手势内同步 speak
+  // 浏览器 voice 立刻打开，cached mp3 / OpenAI 走异步
+  unlockSpeech()
+  playBrowser(text, accent)
+
+  // 异步增强（如果有 mp3 缓存或 openai 就播更好的）
+  ;(async () => {
+    duckMusic(1.5)
+    if (wordId) {
+      const ok = await tryPlayCached(wordId, accent)
+      if (ok) {
+        // 缓存命中后取消浏览器 voice 避免双重播放
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+          window.speechSynthesis.cancel()
+        }
+        return
+      }
     }
-  }
-  await playBrowser(text, accent)
+    if (PROVIDER === 'openai') {
+      try {
+        const ok = await playOpenAI(text, accent)
+        if (ok && typeof window !== 'undefined' && window.speechSynthesis) {
+          window.speechSynthesis.cancel()
+        }
+      } catch (e) {
+        console.warn('OpenAI TTS failed:', e)
+      }
+    }
+  })()
 }
 
 export function isSpeechSupported() {

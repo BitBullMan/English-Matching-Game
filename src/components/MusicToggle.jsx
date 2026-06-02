@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { store } from '../utils/store.js'
 import { startMusic, stopMusic } from '../utils/music.js'
+import { unlockSpeech } from '../utils/speech.js'
 
 // 全局音乐开关 — 固定屏幕右上角，所有页面都可见
 // 点击即开关；首次点击会激活 AudioContext（绕过浏览器自动播放限制）
@@ -19,6 +20,8 @@ export default function MusicToggle() {
   }, [])
 
   const toggle = () => {
+    // 借这次用户手势同时解锁 iOS Safari / WeChat 的 SpeechSynthesis
+    unlockSpeech()
     const s = store.getSettings()
     const next = !on
     setOn(next)
