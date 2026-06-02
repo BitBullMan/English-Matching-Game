@@ -1299,6 +1299,77 @@ body { background: var(--bg-mid); }
 }
 
 /* ============================================
+   全局音乐开关（固定屏幕右上角）
+   ============================================ */
+.music-toggle {
+  position: fixed;
+  top: calc(8px + var(--safe-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  transition: transform 0.18s ease;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.2), 0 9px 18px rgba(0,0,0,0.25);
+}
+.music-toggle:active { transform: translateX(-50%) scale(0.92) translateY(2px) !important; }
+.music-toggle.on  { background: linear-gradient(180deg, #ff8fb6 0%, #d8395d 100%); color: #fff; }
+.music-toggle.off { background: linear-gradient(180deg, #ddd 0%, #999 100%); color: #fff; }
+/* old :active deprecated, kept for safety */
+
+.music-toggle .mt-icon {
+  line-height: 1;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.25));
+}
+
+/* 三条小竖线 — 播放时跳动 */
+.music-toggle .mt-bars {
+  position: absolute;
+  bottom: -3px; right: -3px;
+  width: 20px; height: 20px;
+  background: #fff;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  gap: 2px;
+  padding: 4px 3px;
+  box-sizing: border-box;
+}
+.music-toggle .mt-bars span {
+  width: 2px; height: 6px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.music-toggle.on .mt-bars span {
+  animation: mt-bar 0.9s ease-in-out infinite;
+}
+.music-toggle.on .mt-bars span:nth-child(2) { animation-delay: 0.15s; }
+.music-toggle.on .mt-bars span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes mt-bar {
+  0%, 100% { height: 4px; }
+  50% { height: 9px; }
+}
+
+/* 初次出现 3 秒脉冲提示用户 */
+.music-toggle.pulse::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 3px solid #d8395d;
+  opacity: 0;
+  animation: mt-pulse 1.4s ease-out 3;
+}
+@keyframes mt-pulse {
+  0%   { opacity: 0.8; transform: scale(0.95); }
+  100% { opacity: 0;   transform: scale(1.35); }
+}
+
+/* ============================================
    桌面端容器
    ============================================ */
 @media (min-width: 700px) {

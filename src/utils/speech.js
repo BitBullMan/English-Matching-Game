@@ -39,15 +39,47 @@ function getUserVoiceURI(accent) {
 }
 
 // —— 浏览器 voices 缓存 ——
+// 注意：在 Chrome / iOS Safari 上，getVoices() 第一次同步调用会返回空数组，
+// 需要等 'voiceschanged' 事件触发后才有数据。如果在 voices 加载完成前 speak，
+// 系统会用默认 voice（通常是 en-US 男声）而不会按 lang 匹配，听感差。
 let _voices = []
+let _voicesReady = null  // Promise，第一次拿到非空 voices 时 resolve
+
 function loadVoices() {
   if (typeof window === 'undefined' || !window.speechSynthesis) return []
   _voices = window.speechSynthesis.getVoices()
   return _voices
 }
+
+function ensureVoicesReady() {
+  if (_voicesReady) return _voicesReady
+  _voicesReady = new Promise(resolve => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return resolve([])
+    const got = loadVoices()
+    if (got.length) return resolve(got)
+    // 监听 voiceschanged
+    const handler = () => {
+      const vs = loadVoices()
+      if (vs.length) {
+        window.speechSynthesis.removeEventListener('voiceschanged', handler)
+        resolve(vs)
+      }
+    }
+    window.speechSynthesis.addEventListener('voiceschanged', handler)
+    // 超时兜底（4 秒后无论如何 resolve）
+    setTimeout(() => resolve(_voices), 4000)
+  })
+  return _voicesReady
+}
+
 if (typeof window !== 'undefined' && window.speechSynthesis) {
-  loadVoices()
-  window.speechSynthesis.onvoiceschanged = loadVoices
+  ensureVoicesReady().then(vs => {
+    if (vs && vs.length) {
+      console.log(`[speech] loaded ${vs.length} voices`)
+    } else {
+      console.warn('[speech] no voices available — system may not have TTS installed')
+    }
+  })
 }
 
 // 清晰响亮的偏好女声名单（macOS/iOS/Chrome 覆盖）
@@ -172,24 +204,38 @@ async function playOpenAI(text, accent) {
 }
 
 // —— 浏览器原生 fallback ——
-function playBrowser(text, accent) {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return false
+async function playBrowser(text, accent) {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    console.warn('[speech] speechSynthesis not available')
+    return false
+  }
+  // 等 voices 加载完成（修复"没声音"的核心）
+  await ensureVoicesReady()
+
   const lang =
     accent === 'uk' ? 'en-GB' :
     accent === 'us' ? 'en-US' :
     accent === 'zh' ? 'zh-CN' : 'en-US'
   const utter = new SpeechSynthesisUtterance(text)
   utter.lang = lang
-  // 关键参数：
-  utter.volume = 1.0                                   // 最大音量
-  utter.pitch  = accent === 'uk' ? 1.05 : 1.0          // 英音稍提调，更明亮
-  utter.rate   = accent === 'zh' ? 0.8                 // 中文要慢一点
-              : accent === 'uk' ? 0.92                 // 英音从 0.85 提到 0.92（不再拖沓）
-              : 0.95                                   // 美音
+  utter.volume = 1.0
+  utter.pitch  = accent === 'uk' ? 1.05 : 1.0
+  utter.rate   = accent === 'zh' ? 0.85
+              : accent === 'uk' ? 0.95
+              : 0.95
   const v = pickBrowserVoice(lang, accent)
-  if (v) utter.voice = v
+  if (v) {
+    utter.voice = v
+    console.log(`[speech] ${accent}: "${text}" → ${v.name} (${v.lang})`)
+  } else {
+    console.warn(`[speech] no voice matched for ${lang}, using browser default`)
+  }
   window.speechSynthesis.cancel()
-  window.speechSynthesis.speak(utter)
+  // Chrome bug workaround：偶尔 speak 后 utterance 不发声，要等一会再 speak
+  setTimeout(() => {
+    try { window.speechSynthesis.speak(utter) }
+    catch (e) { console.error('[speech] speak failed:', e) }
+  }, 50)
   return true
 }
 
@@ -213,7 +259,7 @@ export async function speak(text, accent = 'uk', wordId) {
       console.warn('OpenAI TTS failed, falling back to browser:', e)
     }
   }
-  playBrowser(text, accent)
+  await playBrowser(text, accent)
 }
 
 export function isSpeechSupported() {

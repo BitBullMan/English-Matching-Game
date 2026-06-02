@@ -22,9 +22,9 @@ let currentLoopTimer = null
 let currentTrackId = null
 let running = false
 
-// 音量参数（关键：背景音乐基础音量低，避免压制单词发音）
-const MUSIC_BASE_VOL = 0.12   // 背景音乐基础音量
-const MUSIC_DUCK_VOL = 0.02   // 单词朗读时降到的音量
+// 音量参数（背景音乐刻意降到极低，确保完全不干扰单词朗读）
+const MUSIC_BASE_VOL = 0.06   // 背景音乐基础音量（从 0.12 降 50%）
+const MUSIC_DUCK_VOL = 0.01   // 单词朗读时降到这个音量
 const SFX_VOL        = 0.55   // 一次性音效
 
 function hz(midi) { return 440 * Math.pow(2, (midi - 69) / 12) }
