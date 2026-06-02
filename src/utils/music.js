@@ -60,20 +60,9 @@ function ensureCtx() {
   return ctx
 }
 
-// ====== Ducking — 给 speech.js 调用 ======
-// 在单词朗读前调一下：背景音乐渐弱
-export function duckMusic(durationSec = 1.5) {
-  if (!musicMaster || !running) return
-  const now = ctx.currentTime
-  musicMaster.gain.cancelScheduledValues(now)
-  musicMaster.gain.setTargetAtTime(MUSIC_DUCK_VOL, now, 0.05)
-  // durationSec 之后渐回原音量
-  setTimeout(() => {
-    if (!musicMaster) return
-    const n = ctx.currentTime
-    musicMaster.gain.cancelScheduledValues(n)
-    musicMaster.gain.setTargetAtTime(MUSIC_BASE_VOL, n, 0.3)
-  }, durationSec * 1000)
+// ====== Ducking — 背景音乐已删除，保留接口给 speech.js 用作 no-op ======
+export function duckMusic(_durationSec = 1.5) {
+  // no-op since background music is disabled
 }
 
 function tone({ freq, when, dur, type='triangle', dest, attack=0.01, release=0.08, peak=0.9 }) {

@@ -7,9 +7,7 @@ import SettingsScreen from './screens/SettingsScreen.jsx'
 import RankingScreen from './screens/RankingScreen.jsx'
 import AboutScreen from './screens/AboutScreen.jsx'
 import { store } from './utils/store.js'
-import { startMusic, stopMusic } from './utils/music.js'
 import { hideSplash, setStatusBar, onBackButton, onAppStateChange } from './utils/native.js'
-import MusicToggle from './components/MusicToggle.jsx'
 
 export default function App() {
   const [screen, setScreen] = useState('home')
@@ -24,27 +22,13 @@ export default function App() {
   const setLearned = s => { setLearnedRaw(s); store.setLearned(s) }
   const bumpStat = wordId => setStats(store.bumpStat(wordId))
 
-  // 背景音乐：跟随设置 + 切换曲风时重新启动
-  useEffect(() => {
-    if (settings.music) startMusic(settings.musicTrack)
-    else stopMusic()
-  }, [settings.music, settings.musicTrack])
-
-  useEffect(() => () => stopMusic(), [])
-
   // 原生 App 集成
   useEffect(() => {
-    // 首屏渲染好后再隐藏启动屏
     setTimeout(() => hideSplash(), 200)
     setStatusBar('dark', '#ffd9e8')
 
-    // App 进后台时暂停音乐（省电、避免被锁屏切走还在响）
-    const offState = onAppStateChange(isActive => {
-      if (!isActive) stopMusic()
-      else if (settings.music) startMusic(settings.musicTrack)
-    })
+    const offState = onAppStateChange(() => {})
 
-    // Android 返回键：非主页就回主页，主页则放行让原生退出
     const offBack = onBackButton(() => {
       if (screen !== 'home') { setScreen('home'); return true }
       return false
@@ -64,8 +48,6 @@ export default function App() {
   }
 
   const go = (id) => {
-    // 首次任意点击都会触发 AudioContext.resume（满足浏览器手势策略）
-    if (settings.music) startMusic(settings.musicTrack)
     setScreen(id)
   }
 
@@ -116,9 +98,6 @@ export default function App() {
       {claimToast && (
         <div className="toast">{claimToast}</div>
       )}
-
-      {/* 全局音乐开关 — 所有页面右上角醒目位置 */}
-      <MusicToggle />
     </div>
   )
 }

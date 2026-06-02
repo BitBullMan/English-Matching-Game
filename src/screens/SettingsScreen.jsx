@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { store } from '../utils/store.js'
 import { ttsInfo, speak } from '../utils/speech.js'
-import { TRACK_LIST, startMusic, stopMusic } from '../utils/music.js'
 
 export default function SettingsScreen({ onBack, onSettingsChange }) {
   const [s, setS] = useState(store.getSettings())
@@ -23,28 +22,6 @@ export default function SettingsScreen({ onBack, onSettingsChange }) {
 
       <div className="set-list">
         <div className="set-group">音频</div>
-        <Row label="🎵 背景音乐" toggle={s.music} onChange={v => update({ music: v })} />
-
-        {s.music && (
-          <div className="set-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
-            <span style={{ fontSize: 12, color: '#888', fontWeight: 700 }}>选择曲风（点击试听）</span>
-            <div className="track-grid">
-              {TRACK_LIST.map(t => (
-                <button
-                  key={t.id}
-                  className={`track-card ${s.musicTrack === t.id ? 'on' : ''}`}
-                  onClick={() => {
-                    update({ musicTrack: t.id })
-                    startMusic(t.id)
-                  }}
-                >
-                  {t.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
         <Row label="🔔 操作音效" toggle={s.sfx} onChange={v => update({ sfx: v })} />
 
         <div className="set-group">学习偏好</div>
