@@ -76,21 +76,25 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
   ensureVoicesReady().then(vs => {
     if (vs && vs.length) {
       console.log(`[speech] loaded ${vs.length} voices`)
+      const en = vs.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+      const zh = vs.filter(v => v.lang && v.lang.toLowerCase().startsWith('zh'))
+      console.log(`[speech] EN voices (${en.length}):`, en.map(v => `${v.name} [${v.lang}]`).join(', '))
+      console.log(`[speech] ZH voices (${zh.length}):`, zh.map(v => `${v.name} [${v.lang}]`).join(', '))
     } else {
       console.warn('[speech] no voices available — system may not have TTS installed')
     }
   })
 }
 
-// 清晰响亮的偏好女声名单（macOS/iOS/Chrome 覆盖）
+// 清晰响亮的偏好女声名单（macOS/iOS/Chrome/Windows 覆盖）
 const PREFERRED_FEMALE_UK = [
-  'Kate', 'Serena', 'Hazel', 'Stephanie',
+  'Kate', 'Serena', 'Hazel', 'Stephanie', 'Fiona',
   'Google UK English Female',
   'Microsoft Hazel', 'Microsoft Susan', 'Microsoft Libby',
-  'Sonia', 'Mia', 'Abbi'   // Microsoft Edge Neural voices
+  'Sonia', 'Mia', 'Abbi'
 ]
 const PREFERRED_FEMALE_US = [
-  'Samantha', 'Allison', 'Ava', 'Susan', 'Karen',
+  'Samantha', 'Allison', 'Ava', 'Susan', 'Karen', 'Victoria', 'Nicky',
   'Google US English Female',
   'Microsoft Aria', 'Microsoft Jenny', 'Microsoft Ana',
   'Nancy', 'Jane', 'Sara'
@@ -100,12 +104,20 @@ const PREFERRED_ZH = [
   'Google 普通话（中国大陆）', 'Microsoft Xiaoxiao', 'Microsoft Yunxi'
 ]
 
+// 已知男声名 — 用于明确排除（按优先级 fallback 时不选这些）
+const KNOWN_MALE_NAMES = /\b(daniel|mike|mark|david|alex|tom|james|guy|jakob|fred|jorge|ryan|brian|oliver|arthur|aaron|albert|bruce|harry|paul|jack|john)\b/i
+const MALE_KEYWORDS = /\bmale\b|\bman\b/i
+
 function matchByName(voices, names) {
   for (const n of names) {
     const v = voices.find(x => x.name === n || x.name.includes(n))
     if (v) return v
   }
   return null
+}
+
+function isMaleVoice(v) {
+  return MALE_KEYWORDS.test(v.name) || KNOWN_MALE_NAMES.test(v.name)
 }
 
 function pickBrowserVoice(lang, accent) {
@@ -118,24 +130,29 @@ function pickBrowserVoice(lang, accent) {
     const u = _voices.find(v => v.voiceURI === userURI)
     if (u) return u
   }
-  // 2. 按偏好女声名单匹配
+  // 2. 按偏好女声名单精确匹配
   const namelist =
     accent === 'uk' ? PREFERRED_FEMALE_UK :
     accent === 'us' ? PREFERRED_FEMALE_US :
     accent === 'zh' ? PREFERRED_ZH : []
   const named = matchByName(inLang, namelist)
   if (named) return named
-  // 3. Premium / Enhanced / Neural 且匹配 lang
-  const premium = inLang.find(v => /premium|enhanced|neural|natural|siri|wavenet/i.test(v.name))
-  if (premium) return premium
-  // 4. 名字含 "Female" 字样
+  // 3. 含 'female' / 'woman' 字样
   const female = inLang.find(v => /female|woman/i.test(v.name))
   if (female) return female
-  // 5. 任何匹配 lang 的
+  // 4. Premium / Enhanced / Neural — 但排除明显男声
+  const premiumNotMale = inLang.find(v =>
+    /premium|enhanced|neural|natural|siri|wavenet/i.test(v.name) && !isMaleVoice(v)
+  )
+  if (premiumNotMale) return premiumNotMale
+  // 5. 任何 lang 匹配且非已知男声
+  const notMale = inLang.find(v => !isMaleVoice(v))
+  if (notMale) return notMale
+  // 6. 实在没有非男声的，至少匹配 lang
   if (inLang.length) return inLang[0]
-  // 6. 任何同前缀的（en / zh）
-  const generic = _voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0, 2)))
-  return generic || null
+  // 7. 任何同前缀的（en / zh）
+  const generic = _voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0, 2)) && !isMaleVoice(v))
+  return generic || _voices.find(v => v.lang && v.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0, 2))) || null
 }
 
 // 暴露给设置页：列出某 accent 可用的 voice
@@ -225,55 +242,54 @@ export function unlockSpeech() {
   }
 }
 
-// —— 浏览器原生（同步版本，保持手势上下文）——
+// —— 浏览器原生 ——
+// 关键：同步触发以保持 iOS 手势上下文 +
+//      校正：如果首播挑到男声/默认，等 voices 完整加载后立刻覆盖播一遍正确的女声
 function playBrowser(text, accent) {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     console.warn('[speech] speechSynthesis not available')
     return false
   }
-  // 同步加载 voices（即使首次返回空也继续，让浏览器用默认 voice）
   if (!_voices.length) loadVoices()
 
   const lang =
     accent === 'uk' ? 'en-GB' :
     accent === 'us' ? 'en-US' :
     accent === 'zh' ? 'zh-CN' : 'en-US'
-  const utter = new SpeechSynthesisUtterance(text)
-  utter.lang = lang
-  utter.volume = 1.0
-  utter.pitch  = accent === 'uk' ? 1.05 : 1.0
-  utter.rate   = accent === 'zh' ? 0.85 : 0.95
 
-  const v = pickBrowserVoice(lang, accent)
-  if (v) {
-    utter.voice = v
-    console.log(`[speech] ${accent}: "${text}" → ${v.name} (${v.lang})`)
-  } else {
-    console.warn(`[speech] no voice for ${lang}, using browser default`)
+  const makeUtter = (voice) => {
+    const u = new SpeechSynthesisUtterance(text)
+    u.lang = lang
+    u.volume = 1.0
+    u.pitch  = accent === 'uk' ? 1.05 : 1.0
+    u.rate   = accent === 'zh' ? 0.85 : 0.95
+    if (voice) u.voice = voice
+    return u
   }
 
+  const v1 = pickBrowserVoice(lang, accent)
+  const firstIsMale = v1 && isMaleVoice(v1)
+  if (v1 && !firstIsMale) {
+    console.log(`[speech] ${accent}: "${text}" → ${v1.name} (${v1.lang})`)
+  } else {
+    console.warn(`[speech] first pick for ${lang}: ${v1 ? v1.name : 'default'} (male=${firstIsMale}) — will retry after voices load`)
+  }
   window.speechSynthesis.cancel()
   try {
-    window.speechSynthesis.speak(utter)
+    window.speechSynthesis.speak(makeUtter(v1))
   } catch (e) {
     console.error('[speech] speak failed:', e)
     return false
   }
 
-  // 如果 voices 还没加载，加载完后重播一次（仅在第一次 voices 异步加载后用）
-  if (!v && !_voices.length) {
+  // 如果首播没拿到女声（v1 为 null 或男声），等 voices 加载完再校正一次
+  if (!v1 || firstIsMale) {
     ensureVoicesReady().then(() => {
       const v2 = pickBrowserVoice(lang, accent)
-      if (v2) {
-        const u2 = new SpeechSynthesisUtterance(text)
-        u2.lang = lang
-        u2.volume = 1.0
-        u2.pitch = utter.pitch
-        u2.rate = utter.rate
-        u2.voice = v2
-        window.speechSynthesis.cancel()
-        window.speechSynthesis.speak(u2)
+      if (v2 && v2 !== v1 && !isMaleVoice(v2)) {
         console.log(`[speech] re-played ${accent}: "${text}" with ${v2.name}`)
+        window.speechSynthesis.cancel()
+        window.speechSynthesis.speak(makeUtter(v2))
       }
     })
   }
