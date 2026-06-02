@@ -131,10 +131,14 @@ async function playOpenAI(text, accent) {
 // —— 浏览器原生 fallback ——
 function playBrowser(text, accent) {
   if (typeof window === 'undefined' || !window.speechSynthesis) return false
-  const lang = accent === 'uk' ? 'en-GB' : 'en-US'
+  // 多 accent 支持：uk → en-GB / us → en-US / zh → zh-CN（普通话，给学中文用）
+  const lang =
+    accent === 'uk' ? 'en-GB' :
+    accent === 'us' ? 'en-US' :
+    accent === 'zh' ? 'zh-CN' : 'en-US'
   const utter = new SpeechSynthesisUtterance(text)
   utter.lang = lang
-  utter.rate = accent === 'uk' ? 0.85 : 0.9
+  utter.rate = accent === 'zh' ? 0.85 : (accent === 'uk' ? 0.85 : 0.9)
   const v = pickBrowserVoice(lang)
   if (v) utter.voice = v
   window.speechSynthesis.cancel()

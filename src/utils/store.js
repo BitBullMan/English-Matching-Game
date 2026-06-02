@@ -38,10 +38,14 @@ export const store = {
   // 设置
   getSettings: () => read('settings', {
     music: true,
-    musicTrack: 'kawaii',   // kawaii | lofi | chip | forest
+    musicTrack: 'kawaii',   // kawaii | chip
     sfx: true,
     defaultAccent: 'uk',
-    dailyGoal: 8
+    dailyGoal: 8,
+    // 学习模式：
+    //   'en' = 中国人学英语（默认）— 弹卡突出英文 + 英文发音
+    //   'zh' = 英语母语者学中文 — 弹卡突出汉字+拼音 + 中文普通话发音
+    learnMode: 'en'
   }),
   setSettings: v => write('settings', v),
 

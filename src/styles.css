@@ -42,24 +42,28 @@ html, body, #root {
   margin: 0; padding: 0;
   height: 100%;
   overflow: hidden;
-  /* 字体：英文 Fredoka (圆润胖体)，中文 ZCOOL KuaiLe (圆润卡通)，
-     系统兜底 PingFang Rounded / Source Han Sans Rounded */
+  /* 字体：
+     英文 Nunito 700 — 比 Fredoka 更工整，非母语者字符识别度更高
+     中文 Noto Sans SC 700 — 标准圆体，加粗后清晰 */
   font-family:
-    "Fredoka",
-    "ZCOOL KuaiLe",
-    "PingFang SC Rounded", "PingFang SC",
-    "Source Han Sans Rounded", "HarmonyOS Sans SC",
-    "Microsoft YaHei", "Helvetica Rounded", "Helvetica Neue", system-ui, sans-serif;
-  font-weight: 500;
+    "Nunito",
+    "Noto Sans SC",
+    "PingFang SC", "HarmonyOS Sans SC",
+    "Microsoft YaHei", "Helvetica Neue",
+    system-ui, sans-serif;
+  font-weight: 700;          /* 整体加粗，方便阅读 */
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-/* 中文字体 fallback：中文字符自动用 ZCOOL KuaiLe */
-:lang(zh), :lang(zh-CN), :lang(zh-Hans) { font-family: "ZCOOL KuaiLe", "Fredoka", sans-serif; }
 
-/* 标题 / 数字默认更重 */
-h1, h2, h3 { font-family: "Fredoka", "ZCOOL KuaiLe", sans-serif; font-weight: 700; }
+/* 标题 / 大数字默认更重 */
+h1, h2, h3 {
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
+  font-weight: 900;
+}
 
 /* 彩色渐变文字工具类 */
 .rainbow-text {
@@ -215,8 +219,8 @@ body { background: var(--bg-mid); }
   position: absolute;
   top: 110px; left: 8px;
   z-index: 6;
-  font-family: "ZCOOL KuaiLe", "Fredoka", sans-serif;
-  font-weight: 400;
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
+  font-weight: 800;
   font-size: 30px;
   color: var(--combo-red);
   -webkit-text-stroke: 2px var(--combo-stroke);
@@ -348,7 +352,7 @@ body { background: var(--bg-mid); }
   flex-direction: column;
   align-items: center; justify-content: center;
   gap: 2px;
-  font-family: "ZCOOL KuaiLe", "Fredoka", sans-serif;
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
   font-size: 16px;
   font-weight: 700;
   position: relative;
@@ -426,7 +430,7 @@ body { background: var(--bg-mid); }
   top: -8px; right: -8px;
   background: #fff;
   color: #e3344a;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: 12px; font-weight: 700;
   border-radius: 50%;
   width: 26px; height: 26px;
@@ -450,7 +454,7 @@ body { background: var(--bg-mid); }
   transform: translate(-50%, -50%);
   z-index: 80;
   pointer-events: none;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-weight: 700;
   font-size: 56px;
   background: linear-gradient(180deg, #ffd24a 0%, #ff7a00 60%, #d8395d 100%);
@@ -528,7 +532,7 @@ body { background: var(--bg-mid); }
   filter: drop-shadow(0 4px 0 rgba(0,0,0,0.12));
 }
 .card-en {
-  font-family: "Fredoka", sans-serif;
+  font-family: "Nunito", sans-serif;
   margin: 6px 0 2px;
   font-size: 34px;
   font-weight: 700;
@@ -540,7 +544,7 @@ body { background: var(--bg-mid); }
   letter-spacing: 0.5px;
 }
 .card-zh {
-  font-family: "ZCOOL KuaiLe", sans-serif;
+  font-family: "Noto Sans SC", sans-serif;
   font-size: 18px;
   color: #5e3e00;
   letter-spacing: 2px;
@@ -570,6 +574,17 @@ body { background: var(--bg-mid); }
 }
 .flag-uk { background: linear-gradient(135deg, #012169, #c8102e); }
 .flag-us { background: linear-gradient(135deg, #002868, #bf0a30); }
+.flag-cn { background: linear-gradient(135deg, #de2910, #ffde00); color: #fff !important; font-size: 12px !important; }
+
+.card-pinyin {
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
+  font-size: 18px;
+  color: #b56500;
+  letter-spacing: 2px;
+  margin-top: 4px;
+  font-style: italic;
+  font-weight: 800;
+}
 
 .ipa-text {
   font-family: "Lucida Sans Unicode", "Segoe UI", sans-serif;
@@ -682,7 +697,7 @@ body { background: var(--bg-mid); }
 }
 .modal h2 {
   margin: 0 0 8px;
-  font-family: "ZCOOL KuaiLe", "Fredoka", sans-serif;
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
   font-size: 28px;
   background: linear-gradient(180deg, #ff8c42 0%, #d8395d 100%);
   -webkit-background-clip: text; background-clip: text;
@@ -759,7 +774,7 @@ body { background: var(--bg-mid); }
   z-index: 4;
 }
 .title-en {
-  font-family: "Fredoka", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: 36px;
   font-weight: 700;
   background: linear-gradient(90deg, #ff5e9b 0%, #ff9a3a 30%, #ffd24a 50%, #6fc6ff 75%, #b076ff 100%);
@@ -770,7 +785,7 @@ body { background: var(--bg-mid); }
   letter-spacing: 1px;
 }
 .title-zh {
-  font-family: "ZCOOL KuaiLe", sans-serif;
+  font-family: "Noto Sans SC", sans-serif;
   margin-top: 0;
   font-size: 18px;
   background: linear-gradient(180deg, #d8395d 0%, #834050 100%);
@@ -841,14 +856,14 @@ body { background: var(--bg-mid); }
 .stat { flex: 1; text-align: center; }
 .stat + .stat { border-left: 1px dashed rgba(216,57,93,0.3); }
 .stat-n {
-  font-family: "Fredoka", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-size: 22px; font-weight: 700;
   background: linear-gradient(180deg, #ff8c42 0%, #d8395d 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.1;
 }
-.stat-l { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 12px; color: #888; margin-top: 2px; letter-spacing: 1px; }
+.stat-l { font-family: "Noto Sans SC", sans-serif; font-size: 12px; color: #888; margin-top: 2px; letter-spacing: 1px; }
 
 .play-btn {
   width: 100%;
@@ -857,8 +872,8 @@ body { background: var(--bg-mid); }
   color: #fff;
   border: 4px solid #fff;
   border-radius: 22px;
-  font-family: "ZCOOL KuaiLe", "Fredoka", sans-serif;
-  font-size: 26px; font-weight: 400;
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
+  font-size: 26px; font-weight: 800;
   letter-spacing: 8px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -928,9 +943,9 @@ body { background: var(--bg-mid); }
 .back-btn:active { transform: translateY(2px); }
 .sub-title {
   flex: 1;
-  font-family: "ZCOOL KuaiLe", sans-serif;
+  font-family: "Noto Sans SC", sans-serif;
   font-size: 22px;
-  font-weight: 400;
+  font-weight: 800;
   background: linear-gradient(180deg, #ff5e9b 0%, #d8395d 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -1169,8 +1184,8 @@ body { background: var(--bg-mid); }
   color: #b56500;
   border-radius: 12px;
   padding: 10px 8px;
-  font-family: "ZCOOL KuaiLe", "Fredoka", sans-serif;
-  font-size: 13px; font-weight: 400;
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
+  font-size: 13px; font-weight: 800;
   cursor: pointer;
   text-align: center;
   letter-spacing: 0.5px;

@@ -1,16 +1,6 @@
 import React, { useMemo, useState } from 'react'
-import { WORDS, WORD_MAP } from '../data/words.js'
+import { WORDS, WORD_MAP, CATEGORIES } from '../data/words.js'
 import WordCard from '../components/WordCard.jsx'
-
-const CATEGORIES = [
-  { id: 'all',      label: '全部' },
-  { id: 'food',     label: '食物' },
-  { id: 'daily',    label: '生活' },
-  { id: 'clothing', label: '服饰' },
-  { id: 'office',   label: '文具' },
-  { id: 'kitchen',  label: '厨房' },
-  { id: 'animal',   label: '动物' }
-]
 
 export default function ReviewScreen({ onBack, learned, stats }) {
   const [cat, setCat] = useState('all')

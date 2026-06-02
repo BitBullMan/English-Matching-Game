@@ -49,6 +49,15 @@ export default function SettingsScreen({ onBack, onSettingsChange }) {
 
         <div className="set-group">学习偏好</div>
         <Choice
+          label="🌏 学习模式"
+          value={s.learnMode || 'en'}
+          options={[
+            { v: 'en', l: '我学英语 🇨🇳→🇬🇧' },
+            { v: 'zh', l: 'Learn 中文 🇬🇧→🇨🇳' }
+          ]}
+          onChange={v => update({ learnMode: v })}
+        />
+        <Choice
           label="📢 默认发音"
           value={s.defaultAccent}
           options={[{ v: 'uk', l: '英音 🇬🇧' }, { v: 'us', l: '美音 🇺🇸' }]}

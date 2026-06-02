@@ -1,5 +1,6 @@
 import React from 'react'
 import { WORDS } from '../data/words.js'
+import { store } from '../utils/store.js'
 
 // 侧栏快捷入口（参考"猪坚强"主页结构）
 const SIDE_ENTRIES = [
@@ -40,7 +41,11 @@ export default function HomeScreen({ onGo, coins, learned, streak }) {
         <div className="title-zh">消消学英语</div>
         <div className="mascot">🐼</div>
         <div className="mascot-shadow" />
-        <div className="speech-bubble">🎋 一起学新词吧！</div>
+        <div className="speech-bubble">
+          {(store.getSettings().learnMode || 'en') === 'zh'
+            ? '🎋 Hi! Let\'s learn 中文 today!'
+            : '🎋 一起学新词吧！'}
+        </div>
       </div>
 
       {/* 底部 CTA */}
