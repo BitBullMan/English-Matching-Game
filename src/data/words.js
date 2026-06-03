@@ -526,6 +526,14 @@ export const WORDS = [
       memo_en:'Common praise phrase.', memo_zh:'常用表扬话。' })
 ]
 
+// 引入 100 个旅游/日常常用短句 (中英双语+拼音，旅游+日常场景)
+import { PHRASES, SCENARIOS } from './phrases.js'
+export { PHRASES, SCENARIOS }
+
+// 合并：游戏抽词从 WORDS+PHRASES 一起抽
+// 单纯词（type:'word'）用单 emoji；短句（type:'phrase'）也有 emoji 可在 tile 显示
+WORDS.push(...PHRASES)
+
 // 按 id 索引
 export const WORD_MAP = Object.fromEntries(WORDS.map(w => [w.id, w]))
 
