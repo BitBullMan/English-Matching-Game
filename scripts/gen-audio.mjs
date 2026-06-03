@@ -88,23 +88,42 @@ console.log(`📁 输出:  ${path.relative(ROOT, OUT_DIR)}/`)
 console.log(`📚 词库:  ${WORDS.length} 词 × 2 = ${WORDS.length * 2} 个文件`)
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
 
-let done = 0, skipped = 0, failed = 0
+// 并发跑 — OpenAI TTS 允许 ~50 req/min，开 8 并发安全
+const CONCURRENCY = parseInt(process.env.CONCURRENCY || '8', 10)
+
+const jobs = []
 for (const w of WORDS) {
   for (const accent of ['uk', 'us']) {
     const out = path.join(OUT_DIR, `${w.id}-${accent}.mp3`)
-    try { await fs.access(out); skipped++; continue } catch (_) {}
-    process.stdout.write(`  ${w.english.padEnd(20)} ${accent}  →  `)
+    jobs.push({ word: w, accent, out })
+  }
+}
+
+// 先过滤掉已存在的
+const remaining = []
+let skipped = 0
+for (const j of jobs) {
+  try { await fs.access(j.out); skipped++ } catch (_) { remaining.push(j) }
+}
+console.log(`待生成 ${remaining.length} 个 (已存在 ${skipped})\n`)
+
+let done = 0, failed = 0
+async function worker(jobs) {
+  while (jobs.length) {
+    const j = jobs.shift()
+    if (!j) return
     try {
-      await gen(w.english, accent, out)
-      console.log('✓')
+      await gen(j.word.english, j.accent, j.out)
       done++
-      await new Promise(r => setTimeout(r, 100))
+      process.stdout.write(`✓ ${j.word.english} (${j.accent})  `)
     } catch (e) {
-      console.log('✗ ' + e.message.slice(0, 60))
       failed++
+      process.stdout.write(`✗ ${j.word.english} (${j.accent})  `)
     }
   }
 }
+await Promise.all(Array.from({ length: CONCURRENCY }, () => worker(remaining)))
+console.log('')
 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
 console.log(`✅ 新生成: ${done}   ⏭️  已存在: ${skipped}   ❌ 失败: ${failed}`)
 console.log(`📁 mp3 在 ${path.relative(ROOT, OUT_DIR)}/`)
