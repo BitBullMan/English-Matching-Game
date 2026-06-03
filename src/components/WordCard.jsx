@@ -29,7 +29,10 @@ export default function WordCard({ word, onClose }) {
 
   function doSpeak(accent, text) {
     setPlaying(accent + ':' + (text || ''))
-    speak(text, accent, accent === 'uk' || accent === 'us' ? word.id : (accent === 'zh' ? word.id : null))
+    // 只有播放单词/短语本身时才用预生成 mp3 cache
+    // 例句 / memo / tip 这些动态文本必须走 TTS，不能用 mp3 cache（否则播错）
+    const isWordItself = text === word.english || text === word.chinese
+    speak(text, accent, isWordItself ? word.id : null)
     setTimeout(() => setPlaying(null), 1500)
   }
 
