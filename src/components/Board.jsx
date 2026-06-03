@@ -60,7 +60,16 @@ export default function Board({ level, tiles, onTileTap }) {
                 }}
                 onClick={() => !covered && onTileTap(tile)}
               >
-                <span style={{ position: 'relative', zIndex: 1 }}>{w.emoji}</span>
+                {w.image ? (
+                  <img
+                    src={w.image}
+                    alt={w.english}
+                    className="tile-image"
+                    draggable={false}
+                  />
+                ) : (
+                  <span style={{ position: 'relative', zIndex: 1 }}>{w.emoji}</span>
+                )}
               </div>
             )
           })}

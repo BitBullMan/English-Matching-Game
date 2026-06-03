@@ -46,13 +46,17 @@ await fs.mkdir(OUT_DIR, { recursive: true })
 
 const MODEL = process.env.OPENAI_TTS_MODEL || 'gpt-4o-mini-tts'
 const VOICES = {
-  uk: process.env.OPENAI_VOICE_UK || 'coral',     // 温暖女声 + British accent
-  us: process.env.OPENAI_VOICE_US || 'nova'        // 清晰年轻女声
+  uk: process.env.OPENAI_VOICE_UK || 'coral',
+  us: process.env.OPENAI_VOICE_US || 'nova',
+  zh: process.env.OPENAI_VOICE_ZH || 'nova'       // nova 的中文也很标准清晰
 }
 const INSTR = {
   uk: "Speak with a clear, warm British English accent. Pronounce the word naturally and clearly, like a friendly English teacher introducing a new vocabulary word to a learner.",
-  us: "Speak with a clear, warm American English accent. Pronounce the word naturally and clearly, like a friendly English teacher introducing a new vocabulary word to a learner."
+  us: "Speak with a clear, warm American English accent. Pronounce the word naturally and clearly, like a friendly English teacher introducing a new vocabulary word to a learner.",
+  zh: "请用清晰标准的普通话朗读这个中文词或短语，像一位友好的汉语老师在教外国人学中文。语速自然，吐字清楚。"
 }
+
+const ACCENTS = (process.env.ACCENTS || 'uk,us,zh').split(',')
 
 async function gen(text, accent, outPath) {
   const body = {
@@ -93,9 +97,11 @@ const CONCURRENCY = parseInt(process.env.CONCURRENCY || '8', 10)
 
 const jobs = []
 for (const w of WORDS) {
-  for (const accent of ['uk', 'us']) {
+  for (const accent of ACCENTS) {
+    // zh 用中文文本，uk/us 用英文文本
+    const text = accent === 'zh' ? w.chinese : w.english
     const out = path.join(OUT_DIR, `${w.id}-${accent}.mp3`)
-    jobs.push({ word: w, accent, out })
+    jobs.push({ word: w, accent, text, out })
   }
 }
 
@@ -113,12 +119,12 @@ async function worker(jobs) {
     const j = jobs.shift()
     if (!j) return
     try {
-      await gen(j.word.english, j.accent, j.out)
+      await gen(j.text, j.accent, j.out)
       done++
-      process.stdout.write(`✓ ${j.word.english} (${j.accent})  `)
+      process.stdout.write(`✓ ${j.word.english}(${j.accent}) `)
     } catch (e) {
       failed++
-      process.stdout.write(`✗ ${j.word.english} (${j.accent})  `)
+      process.stdout.write(`✗ ${j.word.english}(${j.accent}) `)
     }
   }
 }

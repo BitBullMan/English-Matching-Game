@@ -8,6 +8,7 @@ import RankingScreen from './screens/RankingScreen.jsx'
 import AboutScreen from './screens/AboutScreen.jsx'
 import { store } from './utils/store.js'
 import { hideSplash, setStatusBar, onBackButton, onAppStateChange } from './utils/native.js'
+import ModeToggle from './components/ModeToggle.jsx'
 
 export default function App() {
   const [screen, setScreen] = useState('home')
@@ -98,6 +99,9 @@ export default function App() {
       {claimToast && (
         <div className="toast">{claimToast}</div>
       )}
+
+      {/* 全局模式切换 — 顶部居中（替代原音乐按钮位置） */}
+      <ModeToggle onChange={(m) => setSettings({ ...settings, learnMode: m })} />
     </div>
   )
 }
