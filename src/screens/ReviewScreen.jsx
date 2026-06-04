@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { WORDS, WORD_MAP, CATEGORIES } from '../data/words.js'
+import { ALL_VOCAB as WORDS, WORD_MAP, CATEGORIES } from '../data/words.js'
 import WordCard from '../components/WordCard.jsx'
 
 export default function ReviewScreen({ onBack, learned, stats }) {

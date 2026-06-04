@@ -530,12 +530,18 @@ export const WORDS = [
 import { PHRASES, SCENARIOS } from './phrases.js'
 export { PHRASES, SCENARIOS }
 
-// 合并：游戏抽词从 WORDS+PHRASES 一起抽
-// 单纯词（type:'word'）用单 emoji；短句（type:'phrase'）也有 emoji 可在 tile 显示
+// 引入 2932 词扩展词库（OpenAI 生成）— 用于"单词本"复习，不参与游戏 tile（很多抽象词没合适 emoji）
+import { VOCAB_3000 } from './vocab-3000.js'
+export { VOCAB_3000 }
+
+// 合并：游戏抽词从 WORDS+PHRASES 一起抽（有 emoji）
 WORDS.push(...PHRASES)
 
-// 按 id 索引
-export const WORD_MAP = Object.fromEntries(WORDS.map(w => [w.id, w]))
+// 全量词条索引 — 包含扩展词，给 Review/查询用
+export const ALL_VOCAB = [...WORDS, ...VOCAB_3000]
+
+// 按 id 索引（包括扩展词）
+export const WORD_MAP = Object.fromEntries(ALL_VOCAB.map(w => [w.id, w]))
 
 // 按 type 分组
 export const WORDS_ONLY  = WORDS.filter(w => w.type === 'word')
