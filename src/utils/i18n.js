@@ -39,7 +39,7 @@ const ZH = {
   rewardBtn:     '领取奖励',
 
   // 选关页
-  stagesTitle:   '选一关',
+  stagesTitle:   '主题',
   wordCount:     n => `${n} 词`,
 
   // 游戏 HUD
@@ -93,7 +93,7 @@ const EN = {
   reviewBtn:     'Review',
   rewardBtn:     'Rewards',
 
-  stagesTitle:   'Levels',
+  stagesTitle:   'Topics',
   wordCount:     n => `${n} words`,
 
   learnedShort:  n => `Learned ${n}`,
