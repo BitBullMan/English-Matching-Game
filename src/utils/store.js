@@ -47,7 +47,18 @@ export const store = {
 
   // 每日签到
   getCheckin: () => read('checkin', { last: null, streak: 0, claimedDays: [] }),
-  setCheckin: v => write('checkin', v)
+  setCheckin: v => write('checkin', v),
+
+  // 关卡进度：{ stageId: { passed: 通关次数, bestCombo: N, lastPlayedAt: ts } }
+  getStageProgress: () => read('stageProgress', {}),
+  setStageProgress: v => write('stageProgress', v),
+  markStagePassed(stageId) {
+    const p = read('stageProgress', {})
+    const cur = p[stageId] || { passed: 0 }
+    p[stageId] = { ...cur, passed: cur.passed + 1, lastPlayedAt: Date.now() }
+    write('stageProgress', p)
+    return p
+  }
 }
 
 // 今天的 yyyy-mm-dd 字符串（按本地时区）

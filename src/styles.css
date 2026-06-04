@@ -1331,6 +1331,77 @@ body { background: var(--bg-mid); }
 }
 
 /* ============================================
+   关卡选择页 StagesScreen
+   ============================================ */
+.stages-body {
+  flex: 1; overflow-y: auto;
+  padding: 16px 14px calc(20px + var(--safe-bottom));
+}
+.stage-group {
+  margin-bottom: 22px;
+}
+.stage-group-title {
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
+  font-size: 17px; font-weight: 900;
+  margin-bottom: 10px;
+  padding-left: 4px;
+  letter-spacing: 1px;
+}
+.stage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.stage-card {
+  background: #fff;
+  border: 3px solid var(--stage-color, #ffe082);
+  border-radius: 16px;
+  padding: 12px 10px 10px;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+  transition: transform 0.12s ease;
+  font-family: inherit;
+}
+.stage-card:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.08); }
+.stage-card.passed { background: linear-gradient(180deg, #fff 0%, #fff8e5 100%); }
+.stage-emoji { font-size: 32px; line-height: 1; }
+.stage-title {
+  font-family: "Nunito", "Noto Sans SC", sans-serif;
+  font-size: 15px; font-weight: 900;
+  color: #2b2b2b;
+  margin-top: 6px;
+}
+.stage-intro {
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 11px; color: #888;
+  margin-top: 3px;
+  line-height: 1.3;
+  min-height: 28px;
+}
+.stage-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 6px;
+  font-size: 11px;
+}
+.stage-diff { font-size: 10px; }
+.stage-count { color: var(--stage-color, #b56500); font-weight: 800; }
+.stage-check {
+  position: absolute;
+  top: -8px; right: -6px;
+  background: #6fb91c;
+  color: #fff;
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 14px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+}
+
+/* ============================================
    全局模式切换按钮（顶部居中）— 替代原音乐按钮
    en 模式：橙黄 EN 学英语
    zh 模式：红粉 中  Learn 中文

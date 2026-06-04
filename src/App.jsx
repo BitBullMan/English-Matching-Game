@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import HomeScreen from './screens/HomeScreen.jsx'
 import GameScreen from './screens/GameScreen.jsx'
+import StagesScreen from './screens/StagesScreen.jsx'
 import ReviewScreen from './screens/ReviewScreen.jsx'
 import DailyScreen from './screens/DailyScreen.jsx'
 import SettingsScreen from './screens/SettingsScreen.jsx'
@@ -12,6 +13,7 @@ import ModeToggle from './components/ModeToggle.jsx'
 
 export default function App() {
   const [screen, setScreen] = useState('home')
+  const [currentStageId, setCurrentStageId] = useState(null)
   const [coins, setCoinsRaw] = useState(() => store.getCoins())
   const [learned, setLearnedRaw] = useState(() => store.getLearned())
   const [stats, setStats] = useState(() => store.getStats())
@@ -63,9 +65,17 @@ export default function App() {
         />
       )}
 
+      {screen === 'stages' && (
+        <StagesScreen
+          onBack={() => go('home')}
+          onPickStage={(stageId) => { setCurrentStageId(stageId); go('game') }}
+        />
+      )}
+
       {screen === 'game' && (
         <GameScreen
-          onBack={() => go('home')}
+          onBack={() => go('stages')}
+          stageId={currentStageId}
           coins={coins} setCoins={setCoins}
           learned={learned} setLearned={setLearned}
           bumpStat={bumpStat}

@@ -65,9 +65,9 @@ export default function HomeScreen({ onGo, coins, learned, streak }) {
           </div>
         </div>
 
-        <button className="play-btn" onClick={() => onGo('game')}>
+        <button className="play-btn" onClick={() => onGo('stages')}>
           <span style={{ fontSize: 22 }}>▶</span>
-          开始游戏
+          选关挑战
         </button>
 
         <div className="bottom-grid">

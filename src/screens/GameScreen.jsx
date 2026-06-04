@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { WORDS, WORD_MAP } from '../data/words.js'
+import { WORDS, WORD_MAP, ALL_VOCAB } from '../data/words.js'
+import { getStage, getLevelOpt } from '../data/stages.js'
 import { generateLevel } from '../game/level.js'
+import { store } from '../utils/store.js'
 import Board from '../components/Board.jsx'
 import Tray, { TRAY_SIZE } from '../components/Tray.jsx'
 import Tools from '../components/Tools.jsx'
@@ -15,14 +17,28 @@ function defaultLevelOpt() {
   return { wordCount: 7, triplesPerWord: 2, layers: 3, boardW: 340, boardH: 360 }
 }
 
+// 根据 stage 算出词池 + 难度
+function pickStageLevel(stageId) {
+  if (!stageId) return { pool: WORDS, opt: defaultLevelOpt() }
+  const stage = getStage(stageId)
+  if (!stage) return { pool: WORDS, opt: defaultLevelOpt() }
+  let pool = stage.picker(ALL_VOCAB)
+  if (pool.length < 3) pool = WORDS  // 兜底
+  return { pool, opt: getLevelOpt(stage.difficulty), stage }
+}
+
 export default function GameScreen({
   onBack,
+  stageId,
   coins, setCoins,
   learned, setLearned,
   bumpStat,
   sfxOn
 }) {
-  const [level, setLevel] = useState(() => generateLevel(WORDS, defaultLevelOpt()))
+  const [level, setLevel] = useState(() => {
+    const { pool, opt } = pickStageLevel(stageId)
+    return generateLevel(pool, opt)
+  })
   const [tiles, setTiles] = useState(level.tiles)
   const [tray, setTray] = useState([])
   const [freshId, setFreshId] = useState(null)
@@ -92,11 +108,13 @@ export default function GameScreen({
   useEffect(() => {
     if (cardWord) return
     if (tiles.length === 0 && tray.length === 0) {
+      // 通关 → 标记关卡进度
+      if (stageId) store.markStagePassed(stageId)
       setTimeout(() => setShowWin(true), 300)
     } else if (tray.length >= TRAY_SIZE) {
       setShowLose(true)
     }
-  }, [tiles, tray, cardWord])
+  }, [tiles, tray, cardWord, stageId])
 
   const handleUndo = () => {
     if (history.length === 0 || toolCount.undo <= 0) return
@@ -134,7 +152,8 @@ export default function GameScreen({
   }
 
   const restart = () => {
-    const lv = generateLevel(WORDS, defaultLevelOpt())
+    const { pool, opt } = pickStageLevel(stageId)
+    const lv = generateLevel(pool, opt)
     setLevel(lv); setTiles(lv.tiles); setTray([]); setHistory([])
     setShowLose(false); setShowWin(false); setCardWord(null)
     setToolCount({ remove: 3, undo: 5, shuffle: 3 })
