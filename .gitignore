@@ -63,3 +63,7 @@ android/*.iml
 android/app/*.iml
 android/keystore.jks
 android/keystore.properties
+
+# 生成的中间数据（apply 已应用到 src/data/words.js，无需 commit）
+data/rewritten-examples-*.jsonl
+data/image-map-*.json
