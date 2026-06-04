@@ -9,6 +9,7 @@ import Tools from '../components/Tools.jsx'
 import WordCard from '../components/WordCard.jsx'
 import Decorations from '../components/Decorations.jsx'
 import { playDing, playTap } from '../utils/music.js'
+import { t } from '../utils/i18n.js'
 
 const COMBO_WORDS = ['NICE!', 'COOL!', 'GREAT!', 'EXCELLENT!', 'AMAZING!', 'BRAVO!']
 const COMBO_RESET_MS = 2500
@@ -175,13 +176,13 @@ export default function GameScreen({
       </div>
 
       <div className="rank-bubble">
-        <span className="badge">已学 {learned.size}</span>
-        <span className="row">关卡 1-1</span>
+        <span className="badge">{t('learnedShort', learned.size)}</span>
+        <span className="row">{t('stageLabel', '1-1')}</span>
       </div>
 
       {combo.count >= 2 && (
         <div key={combo.key} className="combo-side">
-          连击<span className="x">×</span><span className="n">{combo.count}</span>
+          {t('combo')}<span className="x">×</span><span className="n">{combo.count}</span>
         </div>
       )}
 
@@ -210,9 +211,9 @@ export default function GameScreen({
       {showWin && (
         <div className="overlay">
           <div className="modal">
-            <h2>🎉 通关！</h2>
-            <p>本局学到 {learned.size} 个词 · 共 {coins} 金币</p>
-            <button className="primary" onClick={restart}>再来一关</button>
+            <h2>{t('winTitle')}</h2>
+            <p>{t('winSub', learned.size, coins)}</p>
+            <button className="primary" onClick={restart}>{t('winBtn')}</button>
           </div>
         </div>
       )}
@@ -220,9 +221,9 @@ export default function GameScreen({
       {showLose && (
         <div className="overlay">
           <div className="modal">
-            <h2>😅 槽位满了</h2>
-            <p>试试洗牌或重开</p>
-            <button className="primary" onClick={restart}>重新开始</button>
+            <h2>{t('loseTitle')}</h2>
+            <p>{t('loseSub')}</p>
+            <button className="primary" onClick={restart}>{t('loseBtn')}</button>
           </div>
         </div>
       )}

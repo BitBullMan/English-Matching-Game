@@ -1,17 +1,16 @@
 import React from 'react'
 import { WORDS } from '../data/words.js'
-import { store } from '../utils/store.js'
-
-// 侧栏快捷入口（参考"猪坚强"主页结构）
-const SIDE_ENTRIES = [
-  { id: 'review',   icon: '📚', label: '单词本' },
-  { id: 'daily',    icon: '📅', label: '每日签到' },
-  { id: 'ranking',  icon: '🏆', label: '排行榜' },
-  { id: 'settings', icon: '⚙️', label: '设置' },
-  { id: 'about',    icon: 'ℹ️', label: '关于' }
-]
+import { t } from '../utils/i18n.js'
 
 export default function HomeScreen({ onGo, coins, learned, streak }) {
+  const SIDE_ENTRIES = [
+    { id: 'review',   icon: '📚', label: t('wordbook') },
+    { id: 'daily',    icon: '📅', label: t('daily') },
+    { id: 'ranking',  icon: '🏆', label: t('ranking') },
+    { id: 'settings', icon: '⚙️', label: t('settings') },
+    { id: 'about',    icon: 'ℹ️', label: t('about') }
+  ]
+
   return (
     <div className="home">
       {/* 顶部条 */}
@@ -20,9 +19,7 @@ export default function HomeScreen({ onGo, coins, learned, streak }) {
           <span className="coin-emoji">💰</span>
           <span>{coins}</span>
         </div>
-        <div className="streak-pill">
-          🔥 连续 {streak} 天
-        </div>
+        <div className="streak-pill">{t('streak', streak)}</div>
       </div>
 
       {/* 侧栏入口 */}
@@ -37,15 +34,11 @@ export default function HomeScreen({ onGo, coins, learned, streak }) {
 
       {/* 主舞台 */}
       <div className="stage">
-        <div className="title-en">English Match</div>
-        <div className="title-zh">消消学英语</div>
+        <div className="title-en">{t('appTitleSub')}</div>
+        <div className="title-zh">{t('appTitleMain')}</div>
         <div className="mascot">🐼</div>
         <div className="mascot-shadow" />
-        <div className="speech-bubble">
-          {(store.getSettings().learnMode || 'en') === 'zh'
-            ? '🎋 Hi! Let\'s learn 中文 today!'
-            : '🎋 一起学新词吧！'}
-        </div>
+        <div className="speech-bubble">{t('bubble')}</div>
       </div>
 
       {/* 底部 CTA */}
@@ -53,31 +46,31 @@ export default function HomeScreen({ onGo, coins, learned, streak }) {
         <div className="stat-strip">
           <div className="stat">
             <div className="stat-n">{learned}</div>
-            <div className="stat-l">已学</div>
+            <div className="stat-l">{t('learned')}</div>
           </div>
           <div className="stat">
             <div className="stat-n">{WORDS.length}</div>
-            <div className="stat-l">词库</div>
+            <div className="stat-l">{t('vocabSize')}</div>
           </div>
           <div className="stat">
             <div className="stat-n">{Math.round(learned / WORDS.length * 100)}%</div>
-            <div className="stat-l">完成</div>
+            <div className="stat-l">{t('completed')}</div>
           </div>
         </div>
 
         <button className="play-btn" onClick={() => onGo('stages')}>
           <span style={{ fontSize: 22 }}>▶</span>
-          选关挑战
+          {t('playBtn')}
         </button>
 
         <div className="bottom-grid">
           <button className="grid-btn" onClick={() => onGo('review')}>
             <span className="grid-icon">📚</span>
-            <span>复习单词</span>
+            <span>{t('reviewBtn')}</span>
           </button>
           <button className="grid-btn" onClick={() => onGo('daily')}>
             <span className="grid-icon">🎁</span>
-            <span>领取奖励</span>
+            <span>{t('rewardBtn')}</span>
           </button>
         </div>
       </div>

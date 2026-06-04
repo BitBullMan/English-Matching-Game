@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { ALL_VOCAB } from '../data/words.js'
 import { STAGES, STAGE_GROUPS, DIFFICULTY_LABELS } from '../data/stages.js'
 import { store } from '../utils/store.js'
+import { t, tField } from '../utils/i18n.js'
 
 // 关卡选择页 — 按主题组展示，已通关 ✓
 export default function StagesScreen({ onBack, onPickStage }) {
@@ -28,7 +29,7 @@ export default function StagesScreen({ onBack, onPickStage }) {
     <div className="sub-screen stages">
       <div className="sub-top">
         <button className="back-btn" onClick={onBack}>‹</button>
-        <div className="sub-title">关卡选择</div>
+        <div className="sub-title">{t('stagesTitle')}</div>
         <div className="sub-subtitle">{Object.keys(progress).length}/{validStages.length}</div>
       </div>
 
@@ -38,7 +39,7 @@ export default function StagesScreen({ onBack, onPickStage }) {
           if (!list || !list.length) return null
           return (
             <div key={g.id} className="stage-group">
-              <div className="stage-group-title" style={{ color: g.color }}>{g.label}</div>
+              <div className="stage-group-title" style={{ color: g.color }}>{tField(g, 'label')}</div>
               <div className="stage-grid">
                 {list.map(s => {
                   const passed = progress[s.id]?.passed || 0
@@ -50,11 +51,11 @@ export default function StagesScreen({ onBack, onPickStage }) {
                       style={{ '--stage-color': g.color }}
                     >
                       <div className="stage-emoji">{s.emoji}</div>
-                      <div className="stage-title">{s.title}</div>
-                      <div className="stage-intro">{s.intro}</div>
+                      <div className="stage-title">{tField(s, 'title')}</div>
+                      <div className="stage-intro">{tField(s, 'intro')}</div>
                       <div className="stage-meta">
                         <span className="stage-diff">{DIFFICULTY_LABELS[s.difficulty].stars}</span>
-                        <span className="stage-count">{s.available} 词</span>
+                        <span className="stage-count">{t('wordCount', s.available)}</span>
                       </div>
                       {passed > 0 && <div className="stage-check">✓ {passed}</div>}
                     </button>
