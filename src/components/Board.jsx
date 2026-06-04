@@ -60,7 +60,8 @@ export default function Board({ level, tiles, onTileTap }) {
                 }}
                 onClick={() => !covered && onTileTap(tile)}
               >
-                {w.image ? (
+                {/* emoji 优先（卡通感更强）；仅 preferImage:true 或 emoji 为❓时用真实图 */}
+                {(w.preferImage || w.emoji === '❓' || !w.emoji) && w.image ? (
                   <img
                     src={w.image}
                     alt={w.english}
