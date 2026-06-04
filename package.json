@@ -1,7 +1,7 @@
 {
   "name": "english-match-game",
   "private": true,
-  "version": "0.5.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "羊了个羊式英语学习游戏 — 三消触发单词卡（中英 + 英美音标 + 发音）",
   "scripts": {
@@ -13,7 +13,8 @@
     "cap:add:android": "npm run build && cap add android",
     "cap:sync": "npm run build && cap sync",
     "ios": "npm run cap:sync && cap open ios",
-    "android": "npm run cap:sync && cap open android"
+    "android": "npm run cap:sync && cap open android",
+    "assets:generate": "capacitor-assets generate --assetPath assets"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.0",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@capacitor/android": "^8.3.4",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.3.4",
     "@capacitor/ios": "^8.3.4",
     "@vitejs/plugin-react": "^4.3.1",
