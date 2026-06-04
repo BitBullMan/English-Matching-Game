@@ -60,16 +60,22 @@ export default function Board({ level, tiles, onTileTap }) {
                 }}
                 onClick={() => !covered && onTileTap(tile)}
               >
-                {/* emoji 优先（卡通感更强）；仅 preferImage:true 或 emoji 为❓时用真实图 */}
-                {(w.preferImage || w.emoji === '❓' || !w.emoji) && w.image ? (
-                  <img
-                    src={w.image}
-                    alt={w.english}
-                    className="tile-image"
-                    draggable={false}
-                  />
+                {/* 显示优先级:
+                    1. emoji（卡通辨识度最高） — 默认
+                    2. preferImage:true 或 emoji 为❓时用 image
+                    3. emoji 缺失（如 VOCAB_3000）且无 image → 显示英文单词本身 */}
+                {w.emoji ? (
+                  (w.preferImage || w.emoji === '❓') && w.image ? (
+                    <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
+                  ) : (
+                    <span style={{ position: 'relative', zIndex: 1 }}>{w.emoji}</span>
+                  )
+                ) : w.image ? (
+                  <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
                 ) : (
-                  <span style={{ position: 'relative', zIndex: 1 }}>{w.emoji}</span>
+                  <span className="tile-text" title={w.english}>
+                    {w.english.length <= 4 ? w.english : w.english.slice(0, 4)}
+                  </span>
                 )}
               </div>
             )

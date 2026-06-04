@@ -340,3 +340,39 @@
 }
 
 /* ActivityRings 已移除 — 回到原 stat-strip */
+
+/* ============================================
+   方块 fallback 文字（emoji 缺失时显示英文）
+   ============================================ */
+.tile-text {
+  position: relative;
+  z-index: 1;
+  font-family: "Inter", "Manrope", "SF Pro Display", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #3d2c1f;
+  text-align: center;
+  line-height: 1.05;
+  padding: 0 4px;
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+.tile.covered .tile-text { opacity: 0.75; }
+
+/* 词卡里的英文大字 fallback（emoji 缺时） */
+.card-text-fallback {
+  font-family: "Inter", "Manrope", "SF Pro Display", system-ui, sans-serif;
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--g-900);
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 14px;
+  background: linear-gradient(180deg, #4b4b4b 0%, #131F24 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

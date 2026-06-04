@@ -48,12 +48,17 @@ export default function WordCard({ word, onClose }) {
     <div className="overlay" onClick={onClose}>
       <div className="card" onClick={(e) => e.stopPropagation()}>
         <div className="card-header">
-          {/* emoji 优先：emoji 已严格匹配词意（任务 #36）。
-              只有标记了 preferImage:true 或 emoji 为 ❓ 的词，才回落到真实图片 */}
-          {(word.preferImage || word.emoji === '❓' || !word.emoji) && word.image ? (
+          {/* 显示优先级：emoji > image > 大字英文（vocab-3000 无 emoji 时） */}
+          {word.emoji ? (
+            (word.preferImage || word.emoji === '❓') && word.image ? (
+              <img className="card-image" src={word.image} alt={word.english} />
+            ) : (
+              <div className="card-emoji">{word.emoji}</div>
+            )
+          ) : word.image ? (
             <img className="card-image" src={word.image} alt={word.english} />
           ) : (
-            <div className="card-emoji">{word.emoji}</div>
+            <div className="card-text-fallback">{word.english}</div>
           )}
 
           {isLearnEN ? (
