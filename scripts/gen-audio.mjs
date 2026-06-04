@@ -39,7 +39,16 @@ if (!KEY) {
   process.exit(1)
 }
 
-const { WORDS } = await import(pathToFileURL(path.join(ROOT, 'src/data/words.js')).href)
+const dataModule = await import(pathToFileURL(path.join(ROOT, 'src/data/words.js')).href)
+// 默认只处理 WORDS+PHRASES（有 emoji 的 218 个）；
+// 设 INCLUDE_VOCAB=1 时也处理 2932 个 vocab-3000 扩展词
+// 设 LIMIT=500 时只处理前 500 个（防 git 仓库过大）
+const baseWords = process.env.INCLUDE_VOCAB === '1'
+  ? dataModule.ALL_VOCAB
+  : dataModule.WORDS
+const LIMIT = parseInt(process.env.LIMIT || '0', 10)
+const WORDS = LIMIT > 0 ? baseWords.slice(0, LIMIT) : baseWords
+console.log(`处理 ${WORDS.length} 个词条 (INCLUDE_VOCAB=${process.env.INCLUDE_VOCAB || '0'} LIMIT=${LIMIT})`)
 
 const OUT_DIR = path.join(ROOT, 'public/audio')
 await fs.mkdir(OUT_DIR, { recursive: true })

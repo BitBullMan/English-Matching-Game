@@ -492,7 +492,7 @@ export const WORDS = [
       ipa_uk:'/hɪt ðə bʊks/', ipa_us:'/hɪt ðə bʊks/', category:'phrase',
       example_en:'Time to hit the books!', example_zh:'该用功了！', example_pinyin:'gāi yòng gōng le ！',
       memo_en:'"Hit the books" = study hard.', memo_zh:'"撞书"= 刻苦学习。' }),
-  P({ id:'costanarmandaleg', emoji:'💸', english:'Cost an arm and a leg', chinese:'非常昂贵', pinyin:'fēi cháng áng guì',
+  P({ id:'costanarmandaleg', emoji:'💸', english:'Too expensive!', chinese:'太贵了！', pinyin:'tài guì le ！',
       ipa_uk:'/kɒst ən ɑːm ənd ə leɡ/', ipa_us:'/kɑːst ən ɑːrm ənd ə leɡ/', category:'phrase',
       example_en:'That bag cost an arm and a leg.', example_zh:'那个包贵得要命。', example_pinyin:'nà ge bāo guì dé yào mìng 。',
       memo_en:'"Arm and a leg" = very expensive.', memo_zh:'"一只胳膊一条腿"= 死贵。' }),
