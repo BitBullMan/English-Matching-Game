@@ -15,7 +15,19 @@ function renderWordContent(w) {
   if (w.image) {
     return <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
   }
-  return <span className="tile-text">{w.english.length <= 4 ? w.english : w.english.slice(0, 4)}</span>
+  return (
+    <span
+      className="tile-text"
+      style={{
+        fontSize: w.english.length <= 4 ? 13
+                : w.english.length <= 6 ? 11
+                : w.english.length <= 8 ? 10
+                : 9
+      }}
+    >
+      {w.english}
+    </span>
+  )
 }
 
 export default function Tray({ slots, warn, freshId }) {

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { ALL_VOCAB as WORDS, WORD_MAP, CATEGORIES } from '../data/words.js'
 import WordCard from '../components/WordCard.jsx'
+import { t } from '../utils/i18n.js'
 
 export default function ReviewScreen({ onBack, learned, stats }) {
   const [cat, setCat] = useState('all')
@@ -20,7 +21,7 @@ export default function ReviewScreen({ onBack, learned, stats }) {
     <div className="sub-screen">
       <div className="sub-top">
         <button className="back-btn" onClick={onBack}>‹</button>
-        <div className="sub-title">单词本</div>
+        <div className="sub-title">{t('reviewTitle')}</div>
         <div className="sub-subtitle">{learned.size} / {WORDS.length}</div>
       </div>
 
@@ -48,7 +49,7 @@ export default function ReviewScreen({ onBack, learned, stats }) {
               <span className="wr-emoji">{isLearned ? w.emoji : '❓'}</span>
               <div className="wr-text">
                 <div className="wr-en">{isLearned ? w.english : '???'}</div>
-                <div className="wr-zh">{isLearned ? w.chinese : '消除 3 个解锁'}</div>
+                <div className="wr-zh">{isLearned ? w.chinese : t('reviewLocked')}</div>
               </div>
               {isLearned && (
                 <div className="wr-stat">

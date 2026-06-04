@@ -54,7 +54,9 @@ export default function StagesScreen({ onBack, onPickStage }) {
                       <div className="stage-title">{tField(s, 'title')}</div>
                       <div className="stage-intro">{tField(s, 'intro')}</div>
                       <div className="stage-meta">
-                        <span className="stage-diff">{DIFFICULTY_LABELS[s.difficulty].stars}</span>
+                        <span className={`stage-diff diff-${s.difficulty}`}>
+                          {tField(DIFFICULTY_LABELS[s.difficulty], 'label')}
+                        </span>
                         <span className="stage-count">{t('wordCount', s.available)}</span>
                       </div>
                       {passed > 0 && <div className="stage-check">✓ {passed}</div>}

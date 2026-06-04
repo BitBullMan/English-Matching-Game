@@ -59,6 +59,21 @@ const ZH = {
   loseTitle:     '😅 槽位满了',
   loseSub:       '试试洗牌或重开',
   loseBtn:       '重新开始',
+  quitTitle:     '离开本关？',
+  quitSub:       '当前进度将丢失',
+  quitConfirm:   '离开',
+  quitCancel:    '继续玩',
+
+  // 新手引导
+  onboardTitle1: '点 3 个一样的',
+  onboardText1:  '找到 3 张相同的卡片点击 → 自动消除',
+  onboardTitle2: '学到新词',
+  onboardText2:  '消除后弹出单词卡 — 看中英文、听发音',
+  onboardTitle3: '托盘别满',
+  onboardText3:  '没消除的牌进托盘，满 7 格就输了 🥲',
+  onboardSkip:   '跳过',
+  onboardNext:   '下一步',
+  onboardStart:  '开始玩！',
 
   // 词卡
   cardContinue:  '继续 Continue',
@@ -68,7 +83,67 @@ const ZH = {
   memoTitle:     '记住它 · Remember',
 
   // 难度
-  diffLabels:    ['', '入门', '进阶', '中级', '高级', '挑战']
+  diffLabels:    ['', '入门', '进阶', '中级', '高级', '挑战'],
+
+  // 通用 sub 页面
+  back:          '返回',
+  cancel:        '取消',
+  confirm:       '确定',
+
+  // 设置 Settings
+  settingsTitle:     '设置',
+  settingsAudio:     '音频',
+  settingsSfx:       '🔔 操作音效',
+  settingsLearning:  '学习偏好',
+  settingsMode:      '🌏 学习模式',
+  settingsModeEN:    '我学英语 🇨🇳→🇬🇧',
+  settingsModeZH:    'Learn 中文 🇬🇧→🇨🇳',
+  settingsAccent:    '📢 默认发音',
+  settingsAccentUK:  '英音 🇬🇧',
+  settingsAccentUS:  '美音 🇺🇸',
+  settingsPreview:   '🎧 试听语音',
+  settingsGoal:      '🎯 每日目标',
+  settingsTTSEngine: '语音引擎',
+  settingsTTSProvider: '当前 provider',
+  settingsTTSModel:    '模型',
+  settingsTTSUK:       '英音 voice',
+  settingsTTSUS:       '美音 voice',
+  settingsData:        '数据',
+  settingsClearData:   '🗑 清除所有数据',
+  settingsConfirmClear:'确定清除所有学习记录？',
+
+  // 签到 Daily
+  dailyTitle:        '每日签到',
+  dailyStreakSub:    n => `连续 ${n} 天`,
+  dailyBannerTitle:  '坚持 7 天',
+  dailyBannerSub:    '奖励翻倍 · 解锁专属称号',
+  dailyDay:          n => `第 ${n} 天`,
+  dailyRewardShuffle:'洗牌',
+  dailyRewardUndo:   '撤回',
+  dailyRewardGrand:  '大奖',
+  dailyBtnReady:     '领取今日奖励',
+  dailyBtnClaimed:   '今日已领 · 明天再来',
+
+  // 排行 Ranking
+  rankingTitle:      '排行榜',
+  rankingSubtitle:   '本周',
+  rankingYou:        '你 🐼',
+  rankingNote:       '🚧 当前为本地演示数据；接入后端后会显示真实排名',
+
+  // 复习 Review
+  reviewTitle:       '单词本',
+  reviewLocked:      '消除 3 个解锁',
+
+  // 关于 About
+  aboutTitle:        '关于',
+  aboutTagline:      'English Match — 三消的玩法，单词卡的快感',
+  aboutHowTitle:     '🎮 怎么玩',
+  aboutHowText:      '点击棋盘上没被遮挡的卡片，凑齐 3 张相同就消除，每次消除会弹出该词的英文 / 中文 / 英美音标 / 发音。卡满 7 格未消除则失败。',
+  aboutVocabTitle:   '📚 词库',
+  aboutVocabText:    '3000+ 词，覆盖食物 / 生活 / 旅游短句 / 高频词汇等 10+ 主题。每个词都有中英双语例句和记忆点。',
+  aboutAudioTitle:   '🔊 发音',
+  aboutAudioText:    'OpenAI gpt-4o-mini-tts 预生成 mp3 + CDN 分发，所有用户听到一致的高质量 coral / nova 女声。',
+  aboutRoadmapTitle: '🚀 路线图'
 }
 
 const EN = {
@@ -110,6 +185,20 @@ const EN = {
   loseTitle:     '😅 Tray Full',
   loseSub:       'Try shuffle or restart',
   loseBtn:       'Restart',
+  quitTitle:     'Leave this stage?',
+  quitSub:       'Your progress will be lost',
+  quitConfirm:   'Leave',
+  quitCancel:    'Keep Playing',
+
+  onboardTitle1: 'Tap 3 same tiles',
+  onboardText1:  'Find 3 identical tiles → auto clear',
+  onboardTitle2: 'Learn the word',
+  onboardText2:  'A word card pops up — see translation, hear pronunciation',
+  onboardTitle3: "Don't fill the tray",
+  onboardText3:  'Unmatched tiles go to the tray. Game over if all 7 fill 🥲',
+  onboardSkip:   'Skip',
+  onboardNext:   'Next',
+  onboardStart:  "Let's Play!",
 
   cardContinue:  'Continue · 继续',
   expandShow:    'Tell me more · 深入了解',
@@ -117,7 +206,61 @@ const EN = {
   exampleTitle:  'Example · 例句',
   memoTitle:     'Remember · 记住它',
 
-  diffLabels:    ['', 'Beginner', 'Easy', 'Medium', 'Hard', 'Expert']
+  diffLabels:    ['', 'Beginner', 'Easy', 'Medium', 'Hard', 'Expert'],
+
+  back:          'Back',
+  cancel:        'Cancel',
+  confirm:       'OK',
+
+  settingsTitle:     'Settings',
+  settingsAudio:     'Audio',
+  settingsSfx:       '🔔 Sound Effects',
+  settingsLearning:  'Learning',
+  settingsMode:      '🌏 Learning Mode',
+  settingsModeEN:    'I learn English 🇨🇳→🇬🇧',
+  settingsModeZH:    'Learn 中文 🇬🇧→🇨🇳',
+  settingsAccent:    '📢 Default Accent',
+  settingsAccentUK:  'UK 🇬🇧',
+  settingsAccentUS:  'US 🇺🇸',
+  settingsPreview:   '🎧 Preview Voice',
+  settingsGoal:      '🎯 Daily Goal',
+  settingsTTSEngine: 'Voice Engine',
+  settingsTTSProvider: 'Provider',
+  settingsTTSModel:    'Model',
+  settingsTTSUK:       'UK voice',
+  settingsTTSUS:       'US voice',
+  settingsData:        'Data',
+  settingsClearData:   '🗑 Clear All Data',
+  settingsConfirmClear:'Clear all learning data?',
+
+  dailyTitle:        'Daily Check-in',
+  dailyStreakSub:    n => `${n} day streak`,
+  dailyBannerTitle:  'Keep going 7 days',
+  dailyBannerSub:    'Double rewards · unlock title',
+  dailyDay:          n => `Day ${n}`,
+  dailyRewardShuffle:'Shuffle',
+  dailyRewardUndo:   'Undo',
+  dailyRewardGrand:  'Grand',
+  dailyBtnReady:     'Claim Today\'s Reward',
+  dailyBtnClaimed:   'Claimed · Come back tomorrow',
+
+  rankingTitle:      'Ranking',
+  rankingSubtitle:   'This Week',
+  rankingYou:        'You 🐼',
+  rankingNote:       '🚧 Local demo data — real ranking after backend hookup',
+
+  reviewTitle:       'Wordbook',
+  reviewLocked:      'Match 3 to unlock',
+
+  aboutTitle:        'About',
+  aboutTagline:      'English Match — match-3 fun meets vocab learning',
+  aboutHowTitle:     '🎮 How to Play',
+  aboutHowText:      'Tap any uncovered tile. Match 3 identical tiles to clear them — a word card pops up showing English / Chinese / IPA / pronunciation. Game over if all 7 tray slots fill up.',
+  aboutVocabTitle:   '📚 Vocabulary',
+  aboutVocabText:    '3000+ words across 10+ themes: food, daily life, travel phrases, high-frequency vocabulary. Every word has bilingual examples + memory tips.',
+  aboutAudioTitle:   '🔊 Audio',
+  aboutAudioText:    'OpenAI gpt-4o-mini-tts pregenerated mp3 + CDN delivery. All users hear the same high-quality coral / nova female voice.',
+  aboutRoadmapTitle: '🚀 Roadmap'
 }
 
 const DICT = { zh: ZH, en: EN }

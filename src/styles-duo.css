@@ -362,6 +362,21 @@
 .tile.covered .tile-text { opacity: 0.75; }
 
 /* 词卡里的英文大字 fallback（emoji 缺时） */
+/* Stage 卡上的难度标签 — 替代抽象 ⭐⭐⭐ */
+.stage-diff {
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.stage-diff.diff-1 { background: #e8f7df; color: #4ea818; }   /* 入门 绿 */
+.stage-diff.diff-2 { background: #d8f0fa; color: #1899D6; }   /* 进阶 蓝 */
+.stage-diff.diff-3 { background: #fff2c2; color: #b48400; }   /* 中级 黄 */
+.stage-diff.diff-4 { background: #ffd9d9; color: #c33333; }   /* 高级 红 */
+.stage-diff.diff-5 { background: #2b2b2b; color: #ffd24a; }   /* 挑战 黑金 */
+
 .card-text-fallback {
   font-family: "Inter", "Manrope", "SF Pro Display", system-ui, sans-serif;
   font-size: 56px;

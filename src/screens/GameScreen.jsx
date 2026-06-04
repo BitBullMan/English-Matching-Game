@@ -8,8 +8,9 @@ import Tray, { TRAY_SIZE } from '../components/Tray.jsx'
 import Tools from '../components/Tools.jsx'
 import WordCard from '../components/WordCard.jsx'
 import Decorations from '../components/Decorations.jsx'
+import Onboarding from '../components/Onboarding.jsx'
 import { playDing, playTap } from '../utils/music.js'
-import { t } from '../utils/i18n.js'
+import { t, tField } from '../utils/i18n.js'
 
 const COMBO_WORDS = ['NICE!', 'COOL!', 'GREAT!', 'EXCELLENT!', 'AMAZING!', 'BRAVO!']
 const COMBO_RESET_MS = 2500
@@ -47,6 +48,8 @@ export default function GameScreen({
   const [cardWord, setCardWord] = useState(null)
   const [showLose, setShowLose] = useState(false)
   const [showWin, setShowWin] = useState(false)
+  const [showQuit, setShowQuit] = useState(false)
+  const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem('em:onboarded'))
   const [warn, setWarn] = useState(false)
   const [combo, setCombo] = useState({ count: 0, key: 0 })
   const comboTimer = useRef(null)
@@ -166,7 +169,15 @@ export default function GameScreen({
       <Decorations />
 
       <div className="topbar">
-        <button className="pause-btn" onClick={onBack} title="返回主页">‹</button>
+        <button
+          className="pause-btn"
+          onClick={() => {
+            // 如果有牌已抽出 or 进度过半，要确认；否则直接返回
+            if (tray.length > 0 || tiles.length < level.tiles.length) setShowQuit(true)
+            else onBack()
+          }}
+          title={t('back')}
+        >‹</button>
         <div className="coin-pill">
           <span className="coin-emoji">💰</span>
           <span>{coins}</span>
@@ -177,7 +188,12 @@ export default function GameScreen({
 
       <div className="rank-bubble">
         <span className="badge">{t('learnedShort', learned.size)}</span>
-        <span className="row">{t('stageLabel', '1-1')}</span>
+        <span className="row">
+          {(() => {
+            const stage = getStage(stageId)
+            return stage ? `${stage.emoji} ${tField(stage, 'title')}` : t('stageLabel', '1-1')
+          })()}
+        </span>
       </div>
 
       {combo.count >= 2 && (
@@ -224,6 +240,34 @@ export default function GameScreen({
             <h2>{t('loseTitle')}</h2>
             <p>{t('loseSub')}</p>
             <button className="primary" onClick={restart}>{t('loseBtn')}</button>
+          </div>
+        </div>
+      )}
+
+      {showOnboard && (
+        <Onboarding onDone={() => {
+          localStorage.setItem('em:onboarded', '1')
+          setShowOnboard(false)
+        }} />
+      )}
+
+      {showQuit && (
+        <div className="overlay" onClick={() => setShowQuit(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h2>{t('quitTitle')}</h2>
+            <p>{t('quitSub')}</p>
+            <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+              <button
+                className="primary"
+                style={{ flex: 1, background: '#e5e5e5', color: '#333', borderBottomColor: '#ccc' }}
+                onClick={() => setShowQuit(false)}
+              >{t('quitCancel')}</button>
+              <button
+                className="primary"
+                style={{ flex: 1, background: '#FF4B4B', borderBottomColor: '#c33333' }}
+                onClick={onBack}
+              >{t('quitConfirm')}</button>
+            </div>
           </div>
         </div>
       )}

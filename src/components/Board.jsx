@@ -73,8 +73,18 @@ export default function Board({ level, tiles, onTileTap }) {
                 ) : w.image ? (
                   <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
                 ) : (
-                  <span className="tile-text" title={w.english}>
-                    {w.english.length <= 4 ? w.english : w.english.slice(0, 4)}
+                  // 字号根据词长自适应：短词大，长词小
+                  <span
+                    className="tile-text"
+                    title={w.english}
+                    style={{
+                      fontSize: w.english.length <= 4 ? 16
+                              : w.english.length <= 6 ? 14
+                              : w.english.length <= 8 ? 12
+                              : 10
+                    }}
+                  >
+                    {w.english}
                   </span>
                 )}
               </div>

@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { store, todayKey } from '../utils/store.js'
+import { t } from '../utils/i18n.js'
 
 const REWARDS = [
   { day: 1, type: '💰', n: 50 },
   { day: 2, type: '💰', n: 80 },
-  { day: 3, type: '🔀', n: 1, label: '洗牌' },
+  { day: 3, type: '🔀', n: 1, labelKey: 'dailyRewardShuffle' },
   { day: 4, type: '💰', n: 120 },
-  { day: 5, type: '↩️', n: 1, label: '撤回' },
+  { day: 5, type: '↩️', n: 1, labelKey: 'dailyRewardUndo' },
   { day: 6, type: '💰', n: 200 },
-  { day: 7, type: '🏆', n: 1, label: '大奖' }
+  { day: 7, type: '🏆', n: 1, labelKey: 'dailyRewardGrand' }
 ]
 
 export default function DailyScreen({ onBack, onClaim }) {
@@ -33,15 +34,15 @@ export default function DailyScreen({ onBack, onClaim }) {
     <div className="sub-screen">
       <div className="sub-top">
         <button className="back-btn" onClick={onBack}>‹</button>
-        <div className="sub-title">每日签到</div>
-        <div className="sub-subtitle">连续 {info.streak} 天</div>
+        <div className="sub-title">{t('dailyTitle')}</div>
+        <div className="sub-subtitle">{t('dailyStreakSub', info.streak)}</div>
       </div>
 
       <div className="daily-banner">
         <span className="db-emoji">🎁</span>
         <div className="db-text">
-          <div className="db-title">坚持 7 天</div>
-          <div className="db-sub">奖励翻倍 · 解锁专属称号</div>
+          <div className="db-title">{t('dailyBannerTitle')}</div>
+          <div className="db-sub">{t('dailyBannerSub')}</div>
         </div>
       </div>
 
@@ -51,9 +52,9 @@ export default function DailyScreen({ onBack, onClaim }) {
           const isToday = info.streak === r.day - 1 || (info.streak === r.day && info.last === today)
           return (
             <div key={r.day} className={`daily-cell ${got ? 'got' : ''} ${isToday ? 'today' : ''}`}>
-              <div className="dc-day">第 {r.day} 天</div>
+              <div className="dc-day">{t('dailyDay', r.day)}</div>
               <div className="dc-emoji">{r.type}</div>
-              <div className="dc-amount">{r.label ? r.label : `×${r.n}`}</div>
+              <div className="dc-amount">{r.labelKey ? t(r.labelKey) : `×${r.n}`}</div>
               {got && <div className="dc-check">✓</div>}
             </div>
           )
@@ -65,7 +66,7 @@ export default function DailyScreen({ onBack, onClaim }) {
         onClick={handleClaim}
         disabled={claimedToday}
       >
-        {claimedToday ? '今日已领 · 明天再来' : '领取今日奖励'}
+        {claimedToday ? t('dailyBtnClaimed') : t('dailyBtnReady')}
       </button>
     </div>
   )
