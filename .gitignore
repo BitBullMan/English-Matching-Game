@@ -29,9 +29,37 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Capacitor 原生工程（按团队习惯：若要协作开发可去掉这两行）
-# ios/
-# android/
-
 # 预生成 mp3 — 商业化部署需要随代码一起 commit，让 CDN 自动分发
 # public/audio  ← 注释掉，让 audio 文件进 git
+
+# ========================================================
+# Capacitor 原生工程
+# ========================================================
+# 复制进来的 web 资源 — cap sync 会重新生成（避免 dist 3 倍冗余）
+ios/App/App/public/
+android/app/src/main/assets/public/
+ios/App/App/capacitor.config.json
+android/app/src/main/assets/capacitor.config.json
+
+# iOS 构建产物
+ios/App/build/
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+ios/DerivedData/
+ios/.DS_Store
+*.xcuserstate
+
+# Android 构建产物
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
+android/captures/
+android/local.properties
+android/.idea/
+android/*.iml
+android/app/*.iml
+android/keystore.jks
+android/keystore.properties
