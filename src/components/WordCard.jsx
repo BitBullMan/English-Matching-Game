@@ -48,7 +48,9 @@ export default function WordCard({ word, onClose }) {
     <div className="overlay" onClick={onClose}>
       <div className="card" onClick={(e) => e.stopPropagation()}>
         <div className="card-header">
-          {word.image ? (
+          {/* emoji 优先：emoji 已严格匹配词意（任务 #36）。
+              只有标记了 preferImage:true 或 emoji 为 ❓ 的词，才回落到真实图片 */}
+          {(word.preferImage || word.emoji === '❓' || !word.emoji) && word.image ? (
             <img className="card-image" src={word.image} alt={word.english} />
           ) : (
             <div className="card-emoji">{word.emoji}</div>
