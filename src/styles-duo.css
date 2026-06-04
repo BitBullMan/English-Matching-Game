@@ -1,4 +1,29 @@
 /* ============================================
+   英文字体升级 — Inter 700/800 + Manrope 备用
+   覆盖 styles.css 里默认的 Nunito，让英文显示更现代清爽
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap');
+
+/* 给"主要纯英文区域"应用 Inter — 英文优先，中文 fallback 到 Noto Sans SC */
+.title-en, .title-zh, .play-btn, .card-close, .modal .primary,
+.bi-title, .ring-label, .ring-value, .stage-title, .stage-intro,
+.combo-side, .combo-pop, .speech-bubble {
+  font-family:
+    "Inter", "Manrope", "SF Pro Display", "-apple-system",
+    "Noto Sans SC", "PingFang SC", "HarmonyOS Sans SC",
+    system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* 英文统计数字 / 大字号 — 加紧字距+加重 */
+.stat-n, .ring-value, .ipa-text {
+  font-family: "Inter", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+/* ============================================
    消消学英语 — Duolingo 风格 UI v2
    只覆盖词卡 / 模态弹窗 / 按钮等"学习内容"部分。
    游戏部分（草地/方块/工具按钮）保留 v3 卡通风。
@@ -312,4 +337,55 @@
 .modal .primary:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
+}
+
+/* ============================================
+   Apple Watch 风格三环统计
+   ============================================ */
+.activity-rings-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  margin: 0 0 14px;
+  background: #1c1c1e;
+  border-radius: var(--r-xl);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}
+
+.activity-rings {
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+}
+
+.ring-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #fff;
+}
+.ring-legend-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+.ring-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+  box-shadow: 0 0 6px currentColor;
+}
+.ring-label {
+  flex: 0 0 auto;
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+  min-width: 36px;
+}
+.ring-value {
+  margin-left: auto;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
 }

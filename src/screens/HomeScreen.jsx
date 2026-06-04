@@ -1,6 +1,10 @@
 import React from 'react'
 import { WORDS } from '../data/words.js'
+import { STAGES } from '../data/stages.js'
+import { ALL_VOCAB } from '../data/words.js'
+import { store } from '../utils/store.js'
 import { t } from '../utils/i18n.js'
+import ActivityRings from '../components/ActivityRings.jsx'
 
 export default function HomeScreen({ onGo, coins, learned, streak }) {
   const SIDE_ENTRIES = [
@@ -43,20 +47,13 @@ export default function HomeScreen({ onGo, coins, learned, streak }) {
 
       {/* 底部 CTA */}
       <div className="home-bottom">
-        <div className="stat-strip">
-          <div className="stat">
-            <div className="stat-n">{learned}</div>
-            <div className="stat-l">{t('learned')}</div>
-          </div>
-          <div className="stat">
-            <div className="stat-n">{WORDS.length}</div>
-            <div className="stat-l">{t('vocabSize')}</div>
-          </div>
-          <div className="stat">
-            <div className="stat-n">{Math.round(learned / WORDS.length * 100)}%</div>
-            <div className="stat-l">{t('completed')}</div>
-          </div>
-        </div>
+        <ActivityRings
+          learned={learned}
+          vocabTotal={WORDS.length}
+          stagesPassed={Object.keys(store.getStageProgress()).length}
+          stagesTotal={STAGES.length}
+          streak={streak}
+        />
 
         <button className="play-btn" onClick={() => onGo('stages')}>
           <span style={{ fontSize: 22 }}>▶</span>

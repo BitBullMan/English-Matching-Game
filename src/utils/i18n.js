@@ -34,9 +34,13 @@ const ZH = {
   completed:     '完成',
 
   // 主 CTA
-  playBtn:       '选关挑战',
+  playBtn:       '开始学习',
   reviewBtn:     '复习单词',
   rewardBtn:     '领取奖励',
+  // 三环 label
+  ringWords:     '词汇',
+  ringStages:    '关卡',
+  ringStreak:    '坚持',
 
   // 选关页
   stagesTitle:   '关卡选择',
@@ -89,9 +93,12 @@ const EN = {
   vocabSize:     'Words',
   completed:     'Done',
 
-  playBtn:       'Pick a Stage',
+  playBtn:       'Start Learning',
   reviewBtn:     'Review',
   rewardBtn:     'Rewards',
+  ringWords:     'Words',
+  ringStages:    'Stages',
+  ringStreak:    'Streak',
 
   stagesTitle:   'Choose a Stage',
   wordCount:     n => `${n} words`,
