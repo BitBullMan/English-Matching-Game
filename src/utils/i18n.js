@@ -37,13 +37,9 @@ const ZH = {
   playBtn:       '开始学习',
   reviewBtn:     '复习单词',
   rewardBtn:     '领取奖励',
-  // 三环 label
-  ringWords:     '词汇',
-  ringStages:    '关卡',
-  ringStreak:    '坚持',
 
   // 选关页
-  stagesTitle:   '关卡选择',
+  stagesTitle:   '选一关',
   wordCount:     n => `${n} 词`,
 
   // 游戏 HUD
@@ -96,11 +92,8 @@ const EN = {
   playBtn:       'Start Learning',
   reviewBtn:     'Review',
   rewardBtn:     'Rewards',
-  ringWords:     'Words',
-  ringStages:    'Stages',
-  ringStreak:    'Streak',
 
-  stagesTitle:   'Choose a Stage',
+  stagesTitle:   'Levels',
   wordCount:     n => `${n} words`,
 
   learnedShort:  n => `Learned ${n}`,
