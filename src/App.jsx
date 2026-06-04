@@ -110,8 +110,10 @@ export default function App() {
         <div className="toast">{claimToast}</div>
       )}
 
-      {/* 全局模式切换 — 顶部居中（替代原音乐按钮位置） */}
-      <ModeToggle onChange={(m) => setSettings({ ...settings, learnMode: m })} />
+      {/* 模式切换 — 仅在主页显示，避免遮挡其他页面文字 */}
+      {screen === 'home' && (
+        <ModeToggle onChange={(m) => setSettings({ ...settings, learnMode: m })} />
+      )}
     </div>
   )
 }
