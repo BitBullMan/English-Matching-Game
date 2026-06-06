@@ -135,7 +135,7 @@ export default function WordCard({ word, onClose }) {
                     <button
                       className="bi-speak"
                       onClick={() => isLearnEN
-                        ? doSpeak(settings.defaultAccent || 'us', word.example_en, 'ex_en')
+                        ? doSpeak('us', word.example_en, 'ex_en')   /* 固定 us，对应 mp3 文件 -us.mp3 */
                         : doSpeak('zh', word.example_zh, 'ex_zh')}
                       aria-label="播放例句"
                     ><Volume2 /></button>
@@ -164,7 +164,7 @@ export default function WordCard({ word, onClose }) {
                     <button
                       className="bi-speak"
                       onClick={() => isLearnEN
-                        ? doSpeak(settings.defaultAccent || 'us', word.memo_en, 'memo_en')
+                        ? doSpeak('us', word.memo_en, 'memo_en')    /* 同上，固定 us */
                         : doSpeak('zh', word.memo_zh, 'memo_zh')}
                       aria-label="播放记忆点"
                     ><Volume2 /></button>
