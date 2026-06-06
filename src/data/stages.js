@@ -19,8 +19,10 @@ const DIFFICULTY_PRESETS = {
   5: { wordCount: 12, triplesPerWord: 3, layers: 5, boardW: 380, boardH: 440 }
 }
 
-const filterByCategory = (cat) => (all) => all.filter(w => w.category === cat)
-const filterByScenario = (sc) => (all) => all.filter(w => w.scenario === sc)
+// 这些 helper 只用于"主题关卡"（food/home/animal 等）— 严格只取 base WORDS，
+// 排除 v_ 前缀的 VOCAB_3000（vocab 词没 emoji，混进来会显示成文字方块）
+const filterByCategory = (cat) => (all) => all.filter(w => !w.id?.startsWith('v_') && w.category === cat)
+const filterByScenario = (sc) => (all) => all.filter(w => !w.id?.startsWith('v_') && w.scenario === sc)
 const filterById = (ids) => (all) => all.filter(w => ids.includes(w.id))
 
 // 取前 N 个（用于把 vocab-3000 分批）
@@ -34,17 +36,17 @@ export const STAGES = [
   {
     id: 'food-1', emoji: '🍎', title: '水果入门', intro: '苹果、香蕉、葡萄', title_en: 'Fruits 101', intro_en: 'apple, banana, grape',
     difficulty: 1, group: 'food',
-    picker: (all) => all.filter(w => w.category === 'food' && /apple|banana|grape|strawberry|orange|cherry|peach/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'food' && /apple|banana|grape|strawberry|orange|cherry|peach/i.test(w.english))
   },
   {
     id: 'food-2', emoji: '🥦', title: '蔬菜与谷物', intro: '常见蔬菜、面包', title_en: 'Veggies & Grains', intro_en: 'common veggies, bread',
     difficulty: 2, group: 'food',
-    picker: (all) => all.filter(w => w.category === 'food' && /carrot|broccoli|corn|tomato|bread|cheese|egg|rice|noodle/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'food' && /carrot|broccoli|corn|tomato|bread|cheese|egg|rice|noodle/i.test(w.english))
   },
   {
     id: 'food-3', emoji: '☕', title: '饮品与餐点', intro: '咖啡、茶、披萨', title_en: 'Drinks & Meals', intro_en: 'coffee, tea, pizza',
     difficulty: 2, group: 'food',
-    picker: (all) => all.filter(w => w.category === 'food' && /coffee|tea|wine|beer|milk|pizza|hamburger|sushi|cake|cream/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'food' && /coffee|tea|wine|beer|milk|pizza|hamburger|sushi|cake|cream/i.test(w.english))
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -53,12 +55,12 @@ export const STAGES = [
   {
     id: 'home-1', emoji: '🏠', title: '家居基础', intro: '门、窗、床、沙发', title_en: 'Home Basics', intro_en: 'door, window, bed, sofa',
     difficulty: 1, group: 'home',
-    picker: (all) => all.filter(w => w.category === 'home' && /door|window|bed|sofa|key|clock/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'home' && /door|window|bed|sofa|key|clock/i.test(w.english))
   },
   {
     id: 'home-2', emoji: '🚿', title: '卫浴清洁', intro: '马桶、淋浴、毛巾', title_en: 'Bath & Clean', intro_en: 'toilet, shower, towel',
     difficulty: 2, group: 'home',
-    picker: (all) => all.filter(w => w.category === 'home' && /toilet|shower|bath|soap|broom|mirror/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'home' && /toilet|shower|bath|soap|broom|mirror/i.test(w.english))
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -67,17 +69,17 @@ export const STAGES = [
   {
     id: 'animal-1', emoji: '🐱', title: '小动物', intro: '猫狗熊兔', title_en: 'Small Animals', intro_en: 'cat, dog, bear, rabbit',
     difficulty: 1, group: 'animal',
-    picker: (all) => all.filter(w => w.category === 'animal' && /cat|dog|rabbit|mouse|bird|fish/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'animal' && /cat|dog|rabbit|mouse|bird|fish/i.test(w.english))
   },
   {
     id: 'animal-2', emoji: '🐯', title: '野生动物', intro: '狮虎象熊', title_en: 'Wild Animals', intro_en: 'lion, tiger, elephant',
     difficulty: 2, group: 'animal',
-    picker: (all) => all.filter(w => w.category === 'animal' && /lion|tiger|bear|elephant|panda/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'animal' && /lion|tiger|bear|elephant|panda/i.test(w.english))
   },
   {
     id: 'animal-3', emoji: '🐮', title: '农场动物', intro: '牛羊马鸡', title_en: 'Farm Animals', intro_en: 'cow, horse, sheep, pig',
     difficulty: 1, group: 'animal',
-    picker: (all) => all.filter(w => w.category === 'animal' && /cow|horse|sheep|pig|chicken/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'animal' && /cow|horse|sheep|pig|chicken/i.test(w.english))
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -86,7 +88,7 @@ export const STAGES = [
   {
     id: 'clothing-1', emoji: '👕', title: '衣帽鞋袜', intro: 'T恤、裤、鞋', title_en: 'Clothes & Shoes', intro_en: 'T-shirt, pants, shoes',
     difficulty: 2, group: 'clothing',
-    picker: (all) => all.filter(w => w.category === 'clothing')
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'clothing')
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -95,12 +97,12 @@ export const STAGES = [
   {
     id: 'transport-1', emoji: '🚗', title: '交通工具', intro: '车、火车、飞机', title_en: 'Transport', intro_en: 'car, train, plane',
     difficulty: 2, group: 'transport',
-    picker: (all) => all.filter(w => w.category === 'transport')
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'transport')
   },
   {
     id: 'nature-1', emoji: '☀️', title: '自然万物', intro: '日月星云山', title_en: 'Nature', intro_en: 'sun, moon, stars, mountain',
     difficulty: 2, group: 'nature',
-    picker: (all) => all.filter(w => w.category === 'nature')
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'nature')
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -109,12 +111,12 @@ export const STAGES = [
   {
     id: 'body-1', emoji: '👁️', title: '五官', intro: '眼耳口鼻', title_en: 'Face', intro_en: 'eye, ear, mouth, nose',
     difficulty: 1, group: 'body',
-    picker: (all) => all.filter(w => w.category === 'body' && /eye|ear|nose|mouth/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'body' && /eye|ear|nose|mouth/i.test(w.english))
   },
   {
     id: 'body-2', emoji: '✋', title: '四肢与心脑', intro: '手脚心脑', title_en: 'Body Parts', intro_en: 'hand, foot, heart, brain',
     difficulty: 2, group: 'body',
-    picker: (all) => all.filter(w => w.category === 'body' && /hand|foot|heart|brain/i.test(w.english))
+    picker: (all) => all.filter(w => !w.id.startsWith('v_') && w.category === 'body' && /hand|foot|heart|brain/i.test(w.english))
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
