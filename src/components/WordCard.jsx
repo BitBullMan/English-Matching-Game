@@ -47,14 +47,15 @@ export default function WordCard({ word, onClose }) {
   return (
     <div className="overlay" onClick={onClose}>
       <div className="card" onClick={(e) => e.stopPropagation()}>
-        <div className="card-header">
-          {/* 显示优先级：emoji > image > 大字英文（vocab-3000 无 emoji 时） */}
-          {word.emoji ? (
-            (word.preferImage || word.emoji === '❓') && word.image ? (
-              <img className="card-image" src={word.image} alt={word.english} />
-            ) : (
-              <div className="card-emoji">{word.emoji}</div>
-            )
+        <div className={`card-header ${((word.preferImage || (word.id && word.id.startsWith('v_'))) && word.image) ? 'with-image' : 'no-image'}`}>
+          {/* v2 显示规则：
+              - vocab (v_) 词：抽象多，有图优先大图
+              - base 具象词：emoji 优先（已严格匹配 emoji）
+              - preferImage:true 强制图 */}
+          {((word.preferImage || (word.id && word.id.startsWith('v_'))) && word.image) ? (
+            <img className="card-image" src={word.image} alt={word.english} />
+          ) : word.emoji ? (
+            <div className="card-emoji">{word.emoji}</div>
           ) : word.image ? (
             <img className="card-image" src={word.image} alt={word.english} />
           ) : (

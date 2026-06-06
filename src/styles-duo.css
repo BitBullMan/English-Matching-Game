@@ -77,12 +77,12 @@
   background: #fff;
   border-radius: var(--r-2xl);
   width: 100%;
-  max-width: 380px;
-  max-height: 88vh;
+  max-width: 440px;     /* 380 → 440  v2 */
+  max-height: 92vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.22);
   animation: card-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-origin: center bottom;
 }
@@ -91,29 +91,53 @@
   to   { transform: scale(1); opacity: 1 }
 }
 
-/* —— 图片/emoji 区 —— */
+/* —— 图片/emoji 区 v2 ——
+   有 image: 大图占满 16:9（无内边距，沉浸式）
+   无 image: emoji 居中（带渐变背景） */
 .card-header {
-  background: linear-gradient(135deg, #fff7e0 0%, #ffe9c4 100%);
-  padding: 28px 24px 22px;
-  text-align: center;
   position: relative;
-  /* 移除旧的"双星装饰"伪元素 */
+  text-align: center;
+}
+.card-header.with-image {
+  padding: 0;
+  background: #f7f7f7;
+}
+.card-header.no-image {
+  background: linear-gradient(135deg, #fff7e0 0%, #ffe9c4 100%);
+  padding: 32px 24px 22px;
 }
 .card-header::before, .card-header::after { content: none; }
 
 .card-image {
   display: block;
   width: 100%;
-  height: 180px;
+  height: 240px;          /* 180 → 240, 16:9 横长 */
   object-fit: cover;
-  border-radius: var(--r-lg);
-  margin: 0 auto 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin: 0;
+  border-radius: 0;       /* 顶部圆角由 .card overflow 处理 */
 }
+/* image 模式下，词卡文字浮在图下方 */
+.card-header.with-image .card-image + h2 {
+  margin-top: -36px;
+  padding: 12px 24px 8px;
+  background: linear-gradient(to top, rgba(255,255,255,1) 70%, rgba(255,255,255,0));
+  position: relative;
+  z-index: 2;
+}
+.card-header.with-image > * {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.card-header.with-image .card-en { padding-bottom: 4px; }
+.card-header.with-image .card-pinyin,
+.card-header.with-image .card-zh { padding-bottom: 8px; }
+.card-header.with-image .card-zh:last-child { padding-bottom: 18px; }
+.card-header.with-image .card-pinyin:last-child { padding-bottom: 18px; }
+
 .card-emoji {
-  font-size: 88px;
+  font-size: 96px;
   line-height: 1;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
 }
 
