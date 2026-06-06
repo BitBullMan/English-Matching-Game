@@ -55,12 +55,12 @@ await fs.mkdir(OUT_DIR, { recursive: true })
 
 const MODEL = process.env.OPENAI_TTS_MODEL || 'gpt-4o-mini-tts'
 const VOICES = {
-  uk: process.env.OPENAI_VOICE_UK || 'coral',
+  uk: process.env.OPENAI_VOICE_UK || 'fable',     // 英音男声，明亮清晰
   us: process.env.OPENAI_VOICE_US || 'nova',
-  zh: process.env.OPENAI_VOICE_ZH || 'nova'       // nova 的中文也很标准清晰
+  zh: process.env.OPENAI_VOICE_ZH || 'nova'
 }
 const INSTR = {
-  uk: "Speak with a clear, warm British English accent. Pronounce the word naturally and clearly, like a friendly English teacher introducing a new vocabulary word to a learner.",
+  uk: "Speak with a clear, bright, energetic British English accent — like a confident young English teacher. Articulate every consonant crisply. Avoid sounding low or muffled.",
   us: "Speak with a clear, warm American English accent. Pronounce the word naturally and clearly, like a friendly English teacher introducing a new vocabulary word to a learner.",
   zh: "请用清晰标准的普通话朗读这个中文词或短语，像一位友好的汉语老师在教外国人学中文。语速自然，吐字清楚。"
 }
