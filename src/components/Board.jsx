@@ -61,32 +61,35 @@ export default function Board({ level, tiles, onTileTap }) {
                 onClick={() => !covered && onTileTap(tile)}
               >
                 {/* 显示优先级:
-                    1. emoji（卡通辨识度最高） — 默认
-                    2. preferImage:true 或 emoji 为❓时用 image
-                    3. emoji 缺失（如 VOCAB_3000）且无 image → 显示英文单词本身 */}
-                {w.emoji ? (
-                  (w.preferImage || w.emoji === '❓') && w.image ? (
-                    <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
-                  ) : (
-                    <span style={{ position: 'relative', zIndex: 1 }}>{w.emoji}</span>
+                    1. vocab (v_) 词且有图: 用真实照片（emoji 不够准确，照片更直观）
+                    2. base 词: emoji 优先（apple→🍎 已严格匹配）
+                    3. preferImage:true: 强制图
+                    4. 都没有: 大字英文 */}
+                {(() => {
+                  const isVocab = w.id?.startsWith('v_')
+                  const useImage = (w.preferImage || isVocab) && w.image
+                  if (useImage) {
+                    return <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
+                  }
+                  if (w.emoji) {
+                    return <span style={{ position: 'relative', zIndex: 1 }}>{w.emoji}</span>
+                  }
+                  if (w.image) {
+                    return <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
+                  }
+                  return (
+                    <span
+                      className="tile-text"
+                      title={w.english}
+                      style={{
+                        fontSize: w.english.length <= 4 ? 16
+                                : w.english.length <= 6 ? 14
+                                : w.english.length <= 8 ? 12
+                                : 10
+                      }}
+                    >{w.english}</span>
                   )
-                ) : w.image ? (
-                  <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
-                ) : (
-                  // 字号根据词长自适应：短词大，长词小
-                  <span
-                    className="tile-text"
-                    title={w.english}
-                    style={{
-                      fontSize: w.english.length <= 4 ? 16
-                              : w.english.length <= 6 ? 14
-                              : w.english.length <= 8 ? 12
-                              : 10
-                    }}
-                  >
-                    {w.english}
-                  </span>
-                )}
+                })()}
               </div>
             )
           })}

@@ -3,18 +3,14 @@ import { WORD_MAP } from '../data/words.js'
 
 export const TRAY_SIZE = 7
 
-// 跟 Board 一致的三级 fallback：emoji → image → 英文文字
+// 跟 Board 一致：vocab 词优先用图（emoji 不够准），base 词 emoji 优先
 function renderWordContent(w) {
   if (!w) return null
-  if (w.emoji) {
-    if ((w.preferImage || w.emoji === '❓') && w.image) {
-      return <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
-    }
-    return <span>{w.emoji}</span>
-  }
-  if (w.image) {
-    return <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
-  }
+  const isVocab = w.id?.startsWith('v_')
+  const useImage = (w.preferImage || isVocab) && w.image
+  if (useImage) return <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
+  if (w.emoji) return <span>{w.emoji}</span>
+  if (w.image) return <img src={w.image} alt={w.english} className="tile-image" draggable={false} />
   return (
     <span
       className="tile-text"
@@ -24,9 +20,7 @@ function renderWordContent(w) {
                 : w.english.length <= 8 ? 10
                 : 9
       }}
-    >
-      {w.english}
-    </span>
+    >{w.english}</span>
   )
 }
 
