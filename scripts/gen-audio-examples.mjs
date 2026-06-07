@@ -41,12 +41,16 @@ const OUT_DIR = path.join(ROOT, 'public/audio')
 await fs.mkdir(OUT_DIR, { recursive: true })
 
 const MODEL = 'gpt-4o-mini-tts'
-const VOICES = { uk: 'coral', us: 'nova', zh: 'nova' }
+const VOICES = { uk: 'alloy', us: 'nova', zh: 'nova' }   // uk 改 alloy 跟 gen-audio.mjs 一致
 const INSTR = {
-  uk: "Speak in a clear, warm British English accent. Read this sentence naturally, like a friendly teacher demonstrating real conversation.",
+  uk: "Speak with a warm, friendly, clear voice — like a patient teacher reading an example sentence. Soft but bright tone, every word distinct and easy to follow.",
   us: "Speak in a clear, warm American English accent. Read this sentence naturally, like a friendly teacher demonstrating real conversation.",
   zh: "请用清晰、温柔的标准普通话朗读这个句子，像一位友好的汉语老师在示范日常对话。语速自然，吐字清楚。"
 }
+
+// EN_ACCENT: 控制 example_en / memo_en 用哪个 accent (us 或 uk 或 both)
+// 默认 us（向后兼容），传 uk 则生成 alloy 英音版
+const EN_ACCENT = process.env.EN_ACCENT || 'us'
 
 async function gen(text, accent, outPath) {
   const body = { model: MODEL, voice: VOICES[accent], input: text, response_format: 'mp3' }
@@ -64,9 +68,9 @@ async function gen(text, accent, outPath) {
 // 构建任务清单
 const jobs = []
 for (const w of TODO) {
-  if (w.example_en) jobs.push({ id: `${w.id}_ex_en`, accent: 'us', text: w.example_en, wid: w.id })
+  if (w.example_en) jobs.push({ id: `${w.id}_ex_en`, accent: EN_ACCENT, text: w.example_en, wid: w.id })
   if (w.example_zh) jobs.push({ id: `${w.id}_ex_zh`, accent: 'zh', text: w.example_zh, wid: w.id })
-  if (w.memo_en)    jobs.push({ id: `${w.id}_memo_en`, accent: 'us', text: w.memo_en, wid: w.id })
+  if (w.memo_en)    jobs.push({ id: `${w.id}_memo_en`, accent: EN_ACCENT, text: w.memo_en, wid: w.id })
   if (w.memo_zh)    jobs.push({ id: `${w.id}_memo_zh`, accent: 'zh', text: w.memo_zh, wid: w.id })
 }
 
