@@ -299,42 +299,64 @@ function playBrowser(text, accent) {
   return true
 }
 
+// 当前正在播放的 Audio / SpeechSynthesisUtterance — 用于"新的播放停旧的"
+let _currentAudio = null
+
+function stopAll() {
+  // 停 mp3
+  if (_currentAudio) {
+    try { _currentAudio.pause(); _currentAudio.currentTime = 0 } catch (_) {}
+    _currentAudio = null
+  }
+  // 停浏览器 TTS
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    try { window.speechSynthesis.cancel() } catch (_) {}
+  }
+}
+
 /**
- * 播放发音
+ * 播放发音 — v3 单源策略，彻底修重复播放
  * @param {string} text
  * @param {'uk'|'us'|'zh'} accent
  * @param {string} [wordId]
+ *
+ * 流程：
+ *   1. 停所有正在播的（避免叠加）
+ *   2. unlock iOS (silent utter)
+ *   3. 有 wordId → 直接 audio.play() cache mp3
+ *      .then() ok：播放成功，不启动浏览器
+ *      .catch() 404/失败：fallback 浏览器 TTS
+ *   4. 无 wordId → 直接浏览器 TTS
+ *
+ * 关键：用 Audio 元素 + Promise，永远只有一个声源在响。
  */
 export function speak(text, accent = 'uk', wordId) {
-  // 关键：同步路径优先 — iOS Safari/WeChat 必须在用户手势内同步 speak
-  // 浏览器 voice 立刻打开，cached mp3 / OpenAI 走异步
+  stopAll()
   unlockSpeech()
-  playBrowser(text, accent)
+  duckMusic(1.5)
 
-  // 异步增强（如果有 mp3 缓存或 openai 就播更好的）
-  ;(async () => {
-    duckMusic(1.5)
-    if (wordId) {
-      const ok = await tryPlayCached(wordId, accent)
-      if (ok) {
-        // 缓存命中后取消浏览器 voice 避免双重播放
-        if (typeof window !== 'undefined' && window.speechSynthesis) {
-          window.speechSynthesis.cancel()
-        }
-        return
-      }
+  if (wordId) {
+    const url = cachedMp3Url(wordId, accent)
+    const audio = new Audio(url)
+    audio.volume = 1.0
+    _currentAudio = audio
+    // play() 返回 Promise — 同步在用户手势上下文，能解锁 iOS Safari audio
+    const p = audio.play()
+    if (p && typeof p.then === 'function') {
+      p.then(() => {
+        // 播放成功 — 单源完成
+      }).catch((err) => {
+        // mp3 不存在 (404) 或加载失败 → fallback 浏览器 TTS
+        console.log(`[speech] cache miss for ${wordId}-${accent}, fallback browser`)
+        if (_currentAudio === audio) _currentAudio = null
+        playBrowser(text, accent)
+      })
     }
-    if (PROVIDER === 'openai') {
-      try {
-        const ok = await playOpenAI(text, accent)
-        if (ok && typeof window !== 'undefined' && window.speechSynthesis) {
-          window.speechSynthesis.cancel()
-        }
-      } catch (e) {
-        console.warn('OpenAI TTS failed:', e)
-      }
-    }
-  })()
+    return
+  }
+
+  // 没有 wordId（不可能命中 cache）— 直接浏览器
+  playBrowser(text, accent)
 }
 
 export function isSpeechSupported() {
