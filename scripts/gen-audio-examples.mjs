@@ -41,9 +41,9 @@ const OUT_DIR = path.join(ROOT, 'public/audio')
 await fs.mkdir(OUT_DIR, { recursive: true })
 
 const MODEL = 'gpt-4o-mini-tts'
-const VOICES = { uk: 'alloy', us: 'nova', zh: 'nova' }   // uk 改 alloy 跟 gen-audio.mjs 一致
+const VOICES = { uk: 'fable', us: 'nova', zh: 'nova' }   // uk fable 英式男声 跟 gen-audio.mjs 一致
 const INSTR = {
-  uk: "Speak with a warm, friendly, clear voice — like a patient teacher reading an example sentence. Soft but bright tone, every word distinct and easy to follow.",
+  uk: "Speak with a clear, confident, natural British English accent like a young male English teacher reading an example sentence. Articulate every consonant crisply.",
   us: "Speak in a clear, warm American English accent. Read this sentence naturally, like a friendly teacher demonstrating real conversation.",
   zh: "请用清晰、温柔的标准普通话朗读这个句子，像一位友好的汉语老师在示范日常对话。语速自然，吐字清楚。"
 }

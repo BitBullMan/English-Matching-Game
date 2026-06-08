@@ -21,7 +21,7 @@ const PROVIDER     = ENV.VITE_TTS_PROVIDER     || 'browser'
 const OPENAI_KEY   = ENV.VITE_OPENAI_API_KEY
 const OPENAI_PROXY = ENV.VITE_OPENAI_TTS_PROXY
 const TTS_MODEL    = ENV.VITE_OPENAI_TTS_MODEL || 'gpt-4o-mini-tts'
-const VOICE_UK     = ENV.VITE_OPENAI_VOICE_UK  || 'alloy'   // 柔和温暖中性
+const VOICE_UK     = ENV.VITE_OPENAI_VOICE_UK  || 'fable'   // 英式男声
 const VOICE_US     = ENV.VITE_OPENAI_VOICE_US  || 'nova'
 
 const INSTRUCTIONS_UK = "Speak in a clear, warm British accent. Pronounce the word naturally, like a friendly teacher introducing a new word."
