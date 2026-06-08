@@ -233,16 +233,8 @@ let _audioUnlocked = false
 const SILENT_MP3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQwAADB8AhHneAAAgAAA0gwAABAAABpAAAACAAADSAAAAEAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGk='
 
 export function unlockSpeech() {
-  if (!_unlocked && typeof window !== 'undefined' && window.speechSynthesis) {
-    try {
-      const silent = new SpeechSynthesisUtterance(' ')
-      silent.volume = 0; silent.rate = 1
-      window.speechSynthesis.cancel()
-      window.speechSynthesis.speak(silent)
-      _unlocked = true
-    } catch (_) {}
-  }
-  // 同时解锁 Audio API
+  // 只解锁 Audio API（mp3 cache 是唯一发声源）
+  // 不再解锁 SpeechSynthesis — 我们彻底不用浏览器 TTS（机械女声来源）
   if (!_audioUnlocked && typeof Audio !== 'undefined') {
     try {
       const a = new Audio(SILENT_MP3)
@@ -253,6 +245,7 @@ export function unlockSpeech() {
       }
     } catch (_) {}
   }
+  _unlocked = true
 }
 
 // —— 浏览器原生 ——
@@ -345,29 +338,38 @@ export function speak(text, accent = 'uk', wordId) {
   unlockSpeech()
   duckMusic(1.5)
 
-  const myGen = ++_generation   // 唯一 ID，用于"我还是当前生代"判定
+  const myGen = ++_generation
 
-  if (wordId) {
-    const url = cachedMp3Url(wordId, accent)
-    const audio = new Audio(url)
-    audio.volume = 1.0
-    _currentAudio = audio
-    const p = audio.play()
-    if (p && typeof p.then === 'function') {
-      p.then(() => {
-        // 播放成功 — 单源完成
-      }).catch((err) => {
-        // 关键 guard：只有当我仍是最新一代时才 fallback
-        // 否则用户已经切到下一个词，旧的 fallback 会导致重叠
-        if (myGen !== _generation) return
-        if (_currentAudio === audio) _currentAudio = null
-        console.log(`[speech] cache miss for ${wordId}-${accent}, fallback browser`)
-        playBrowser(text, accent)
-      })
-    }
+  if (!wordId) {
+    // 没 cache ID — 只在偶发场景出现，仍走浏览器 TTS
+    playBrowser(text, accent)
     return
   }
-  playBrowser(text, accent)
+
+  const url = cachedMp3Url(wordId, accent)
+  tryPlayWithRetry(url, myGen, text, accent, 0)
+}
+
+// 重试机制：第一次 audio.play() 在 iOS Safari 偶尔失败（解锁/加载时机）
+// 重试一次，间隔 80ms（这时 audio 大概率已 decoded）
+// 重试仍失败 → 静音放弃，绝不 fallback 浏览器（机械女声来源）
+function tryPlayWithRetry(url, myGen, text, accent, attempt) {
+  if (myGen !== _generation) return  // 用户已切换，丢弃
+  const audio = new Audio(url)
+  audio.volume = 1.0
+  _currentAudio = audio
+  const p = audio.play()
+  if (p && typeof p.then === 'function') {
+    p.catch(() => {
+      if (myGen !== _generation) return
+      if (_currentAudio === audio) _currentAudio = null
+      if (attempt < 1) {
+        // 重试一次
+        setTimeout(() => tryPlayWithRetry(url, myGen, text, accent, attempt + 1), 80)
+      }
+      // 否则放弃 — 静音胜过机械女声
+    })
+  }
 }
 
 // 外部停止当前播放（词卡关闭时调用，防止 audio 继续在后台播）
