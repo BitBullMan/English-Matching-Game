@@ -158,10 +158,12 @@
   margin-top: 6px;
 }
 .card-pinyin {
-  font-size: 15px;
-  color: var(--g-500);
+  font-size: 18px;        /* 15 → 18，拼音是学习核心要醒目 */
+  color: #a87f1e;         /* 比灰色更暖，跟 header 黄色背景搭 */
   font-style: italic;
-  margin-top: 4px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-top: 6px;
 }
 
 /* —— 主体（IPA / 例句 / memo）—— */
@@ -198,10 +200,11 @@
 
 .ipa-text {
   flex: 1;
-  font-size: 16px;
+  font-size: 18px;        /* 16 → 18，IPA 也学习核心 */
   font-weight: 700;
   color: var(--g-700);
-  font-family: "Charter", "Georgia", serif;
+  font-family: "Charter", "Georgia", "Noto Sans", serif;
+  letter-spacing: 0.02em;
 }
 
 /* 🔊 按钮 — Duo 风格 3D 立体 */
