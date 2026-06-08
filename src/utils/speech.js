@@ -224,24 +224,34 @@ async function playOpenAI(text, accent) {
 }
 
 // —— iOS 解锁 ——
-// iOS Safari 要求第一次 speak 必须在用户手势内同步调用，否则永远静默。
-// 也对 WeChat / In-App-Browser 有效。这里在第一次 unlock() 调用时
-// 发一个静音 utterance 来激活 SpeechSynthesis 引擎。
+// iOS Safari 双重解锁：
+//   1. SpeechSynthesis 引擎（unlockSpeech，旧逻辑）
+//   2. Audio API（unlockAudio 新）— 第一次 audio.play() 必须在 user gesture 内
+//      否则后续 audio 全部静音 → fallback 到浏览器 TTS（"低女声"现象）
 let _unlocked = false
+let _audioUnlocked = false
+const SILENT_MP3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQwAADB8AhHneAAAgAAA0gwAABAAABpAAAACAAADSAAAAEAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGkAAAAIAAAANIAAAAQAAAA0gAAABAAAGk='
+
 export function unlockSpeech() {
-  if (_unlocked) return
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-  try {
-    // 静音 utter — 不发声但能"激活"引擎
-    const silent = new SpeechSynthesisUtterance(' ')
-    silent.volume = 0
-    silent.rate = 1
-    window.speechSynthesis.cancel()
-    window.speechSynthesis.speak(silent)
-    _unlocked = true
-    console.log('[speech] unlocked')
-  } catch (e) {
-    console.warn('[speech] unlock failed:', e)
+  if (!_unlocked && typeof window !== 'undefined' && window.speechSynthesis) {
+    try {
+      const silent = new SpeechSynthesisUtterance(' ')
+      silent.volume = 0; silent.rate = 1
+      window.speechSynthesis.cancel()
+      window.speechSynthesis.speak(silent)
+      _unlocked = true
+    } catch (_) {}
+  }
+  // 同时解锁 Audio API
+  if (!_audioUnlocked && typeof Audio !== 'undefined') {
+    try {
+      const a = new Audio(SILENT_MP3)
+      a.volume = 0
+      const p = a.play()
+      if (p && p.then) {
+        p.then(() => { _audioUnlocked = true; a.pause() }).catch(() => {})
+      }
+    } catch (_) {}
   }
 }
 
@@ -301,14 +311,14 @@ function playBrowser(text, accent) {
 
 // 当前正在播放的 Audio / SpeechSynthesisUtterance — 用于"新的播放停旧的"
 let _currentAudio = null
+let _generation = 0  // 每次 speak() +1，用于"旧 Promise resolve 时丢弃" guard
 
 function stopAll() {
-  // 停 mp3
   if (_currentAudio) {
     try { _currentAudio.pause(); _currentAudio.currentTime = 0 } catch (_) {}
+    _currentAudio.src = ''  // 强制 GC
     _currentAudio = null
   }
-  // 停浏览器 TTS
   if (typeof window !== 'undefined' && window.speechSynthesis) {
     try { window.speechSynthesis.cancel() } catch (_) {}
   }
@@ -335,28 +345,35 @@ export function speak(text, accent = 'uk', wordId) {
   unlockSpeech()
   duckMusic(1.5)
 
+  const myGen = ++_generation   // 唯一 ID，用于"我还是当前生代"判定
+
   if (wordId) {
     const url = cachedMp3Url(wordId, accent)
     const audio = new Audio(url)
     audio.volume = 1.0
     _currentAudio = audio
-    // play() 返回 Promise — 同步在用户手势上下文，能解锁 iOS Safari audio
     const p = audio.play()
     if (p && typeof p.then === 'function') {
       p.then(() => {
         // 播放成功 — 单源完成
       }).catch((err) => {
-        // mp3 不存在 (404) 或加载失败 → fallback 浏览器 TTS
-        console.log(`[speech] cache miss for ${wordId}-${accent}, fallback browser`)
+        // 关键 guard：只有当我仍是最新一代时才 fallback
+        // 否则用户已经切到下一个词，旧的 fallback 会导致重叠
+        if (myGen !== _generation) return
         if (_currentAudio === audio) _currentAudio = null
+        console.log(`[speech] cache miss for ${wordId}-${accent}, fallback browser`)
         playBrowser(text, accent)
       })
     }
     return
   }
-
-  // 没有 wordId（不可能命中 cache）— 直接浏览器
   playBrowser(text, accent)
+}
+
+// 外部停止当前播放（词卡关闭时调用，防止 audio 继续在后台播）
+export function stopSpeak() {
+  _generation++   // 失效任何 pending fallback
+  stopAll()
 }
 
 export function isSpeechSupported() {

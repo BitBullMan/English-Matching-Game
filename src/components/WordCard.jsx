@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { speak, isSpeechSupported } from '../utils/speech.js'
+import { speak, stopSpeak, isSpeechSupported } from '../utils/speech.js'
 import { store } from '../utils/store.js'
 import { Volume2, MessageSquare, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -21,7 +21,11 @@ export default function WordCard({ word, onClose }) {
       if (isLearnEN) doSpeak('uk', word.english, 'word')
       else doSpeak('zh', word.chinese, 'word')
     }, 220)
-    return () => clearTimeout(t)
+    // 关键 cleanup：词卡关闭/切换时立刻停音 (防止快速点击叠音)
+    return () => {
+      clearTimeout(t)
+      stopSpeak()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word])
 

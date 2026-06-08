@@ -10,6 +10,7 @@ import WordCard from '../components/WordCard.jsx'
 import Decorations from '../components/Decorations.jsx'
 import Onboarding from '../components/Onboarding.jsx'
 import { playDing, playTap } from '../utils/music.js'
+import { unlockSpeech } from '../utils/speech.js'
 import { t, tField } from '../utils/i18n.js'
 
 const COMBO_WORDS = ['NICE!', 'COOL!', 'GREAT!', 'EXCELLENT!', 'AMAZING!', 'BRAVO!']
@@ -69,6 +70,10 @@ export default function GameScreen({
   const handleTileTap = useCallback((tile) => {
     if (cardWord) return
     if (tray.length >= TRAY_SIZE) return
+
+    // 关键：在 user gesture 同步内解锁 iOS Audio API
+    // 否则 setTimeout 后的 audio.play() 会失败 → fallback 浏览器 TTS（"低女声"现象）
+    unlockSpeech()
 
     if (sfxOn) playTap()
 

@@ -3,10 +3,14 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  // 设置为 './' 使打包后的产物可在任意子路径 / WebView / 微信 H5 下打开
   base: './',
   server: {
     host: true,
     port: 5173
+  },
+  build: {
+    // macOS iCloud 偶尔会留下空"audio 2/" placeholder 目录无法删除，
+    // 让 vite 不清空 outDir 跳过这个问题（Vercel 上没这个问题）
+    emptyOutDir: false
   }
 })
