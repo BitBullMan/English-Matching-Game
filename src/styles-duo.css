@@ -389,6 +389,24 @@
 .tile.covered .tile-text { opacity: 0.75; }
 
 /* 词卡里的英文大字 fallback（emoji 缺时） */
+/* 工具按钮 — 库存=0 时显示金币价格 */
+.tool-badge-buy {
+  background: linear-gradient(135deg, #FFC800, #E67E22) !important;
+  color: #fff !important;
+  font-weight: 800;
+  min-width: 38px;
+  padding: 2px 6px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.tool-needs-buy {
+  /* 库存空时按钮稍微暗一点，引导用户注意 */
+  opacity: 0.92;
+}
+.tool-needs-buy:active {
+  transform: scale(0.95) !important;
+}
+
 /* Stage 卡上的难度标签 — 替代抽象 ⭐⭐⭐ */
 .stage-diff {
   padding: 3px 8px;

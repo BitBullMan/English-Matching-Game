@@ -120,8 +120,30 @@ export default function GameScreen({
     }
   }, [tiles, tray, cardWord, stageId])
 
+  // 工具补货价格
+  const TOOL_PRICES = { remove: 30, undo: 20, shuffle: 50 }
+
+  // 工具用尽时，花金币补货
+  function refillIfNeeded(toolKey) {
+    if (toolCount[toolKey] > 0) return true
+    const price = TOOL_PRICES[toolKey]
+    if (coins < price) {
+      // 钱不够，弹提示
+      setPop({ text: `${price} 💰 不够`, key: Date.now() })
+      setTimeout(() => setPop(null), 1200)
+      return false
+    }
+    // 扣钱 + 补 3 次
+    setCoins(coins - price)
+    setToolCount(c => ({ ...c, [toolKey]: 3 }))
+    setPop({ text: `+3 ${toolKey} (-${price} 💰)`, key: Date.now() })
+    setTimeout(() => setPop(null), 1200)
+    return true
+  }
+
   const handleUndo = () => {
-    if (history.length === 0 || toolCount.undo <= 0) return
+    if (history.length === 0) return
+    if (!refillIfNeeded('undo')) return
     const last = history[history.length - 1]
     const idx = tray.findIndex(t => t.id === last.id)
     if (idx === -1) return
@@ -134,7 +156,8 @@ export default function GameScreen({
   }
 
   const handleRemove = () => {
-    if (tray.length === 0 || toolCount.remove <= 0) return
+    if (tray.length === 0) return
+    if (!refillIfNeeded('remove')) return
     const mv = tray.slice(0, Math.min(3, tray.length))
     const remain = tray.slice(mv.length)
     setTray(remain)
@@ -145,7 +168,7 @@ export default function GameScreen({
   }
 
   const handleShuffle = () => {
-    if (toolCount.shuffle <= 0) return
+    if (!refillIfNeeded('shuffle')) return
     const ids = tiles.map(t => t.wordId)
     for (let i = ids.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
@@ -210,9 +233,10 @@ export default function GameScreen({
         onRemove={handleRemove}
         onUndo={handleUndo}
         onShuffle={handleShuffle}
-        disabledRemove={tray.length === 0 || toolCount.remove <= 0}
-        disabledUndo={history.length === 0 || toolCount.undo <= 0}
+        disabledRemove={tray.length === 0}
+        disabledUndo={history.length === 0}
         counts={toolCount}
+        prices={TOOL_PRICES}
       />
 
       {pop && (

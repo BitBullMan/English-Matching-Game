@@ -8,27 +8,37 @@ const TOOLS = [
   { id: 'shuffle', cls: 'tool-purple', mascot: '🐼', action: '🔀', labelKey: 'toolShuffle', tilt: -3 }
 ]
 
-export default function Tools({ onRemove, onUndo, onShuffle, disabledRemove, disabledUndo, counts }) {
+export default function Tools({ onRemove, onUndo, onShuffle, disabledRemove, disabledUndo, counts, prices }) {
   const handlers = { remove: onRemove, undo: onUndo, shuffle: onShuffle }
   const disabled = { remove: disabledRemove, undo: disabledUndo, shuffle: false }
   return (
     <div className="tools">
-      {TOOLS.map(tool => (
-        <button
-          key={tool.id}
-          className={`tool-btn ${tool.cls}`}
-          onClick={handlers[tool.id]}
-          disabled={disabled[tool.id]}
-          style={{ transform: `rotate(${tool.tilt}deg)` }}
-        >
-          <span className="tool-mascot-wrap">
-            <span className="tool-mascot">{tool.mascot}</span>
-            <span className="tool-action">{tool.action}</span>
-          </span>
-          <span className="tool-label">{t(tool.labelKey)}</span>
-          {counts?.[tool.id] != null && <span className="tool-badge">{counts[tool.id]}</span>}
-        </button>
-      ))}
+      {TOOLS.map(tool => {
+        const count = counts?.[tool.id]
+        const price = prices?.[tool.id]
+        const needsBuy = count === 0 && price != null
+        return (
+          <button
+            key={tool.id}
+            className={`tool-btn ${tool.cls} ${needsBuy ? 'tool-needs-buy' : ''}`}
+            onClick={handlers[tool.id]}
+            disabled={disabled[tool.id]}
+            style={{ transform: `rotate(${tool.tilt}deg)` }}
+          >
+            <span className="tool-mascot-wrap">
+              <span className="tool-mascot">{tool.mascot}</span>
+              <span className="tool-action">{tool.action}</span>
+            </span>
+            <span className="tool-label">{t(tool.labelKey)}</span>
+            {/* 有库存：黄色数字；库存=0：红色金币价格 */}
+            {needsBuy ? (
+              <span className="tool-badge tool-badge-buy">💰{price}</span>
+            ) : count != null ? (
+              <span className="tool-badge">{count}</span>
+            ) : null}
+          </button>
+        )
+      })}
     </div>
   )
 }
